@@ -96,6 +96,7 @@ if(userinfo==null)
         <form id="user_info" class="form-horizontal" action="UserProduce" method="post" role="form">
 
 			<input id="user_id" name="user_id" value="<%=userID %>" type="hidden">
+			<input id="operation" name="operation" value="modify" type="hidden">
 
             <label for="user_account">账号</label>
             <input class="form-control" id="user_account" name="user_account" type="text" value="<%=userinfo.userAccount %>"/>

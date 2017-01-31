@@ -23,6 +23,13 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	<!--[if lt IE 9]>
 	<script src="http://ibootstrap-file.b0.upaiyun.com/www.layoutit.com/js/html5shiv.js"></script>
 	<![endif]-->
+    <script type="text/javascript">
+    function del(userid){
+            if(confirm("是否删除该用户？")){
+            	post("UserProduce", {user_id:userid,operation:'del'});
+            }
+        }
+    </script>
 
 </head>
 
@@ -68,11 +75,15 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
                         <td>
                         	<a class="btn btn-xs btn-info"
                         	href="userInfo.jsp?userID=<%=user.userID %>">详情</a>
+                        	<% if(!user.userID.equals(userBean.userID)){%>
+                        	<a class="btn btn-xs btn-danger"
+                        	onclick="del('<%=user.userID %>')">删除</a>
+                        	<%} %>
                       </td>
 					</tr>
 					<%}	%>
      </table>
-	<script type=text/javascript>
+	<script type="text/javascript">
 	function post(URL, PARAMS) {
 	  var temp = document.createElement("form");
 	  temp.action = URL;
@@ -82,6 +93,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	    var opt = document.createElement("textarea");
 	    opt.name = x;
 	    opt.value = PARAMS[x];
+	    // alert(opt.name)
 	    temp.appendChild(opt);
 	  }
 	  document.body.appendChild(temp);
@@ -89,7 +101,6 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	  return temp;
 	}
 	</script>
-
 	<script type="text/javascript" src="http://cdn.staticfile.org/jquery/2.0.0/jquery.min.js"></script>
 	<script type="text/javascript" src="http://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
 </body>

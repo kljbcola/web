@@ -10,7 +10,6 @@ public class LoginHandler {
     static Connection con;
     static PreparedStatement ps;
     static ResultSet rs;
-    //检查是否已经注册
     public static UserBean checkLogin(String userName,String userPwd)
     {
         //从数据访问组件中取得连接

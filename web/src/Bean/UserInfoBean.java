@@ -6,6 +6,7 @@ public class UserInfoBean {
 	public String userName=null;		//用户昵称
 	public String userType=null;		//用户类型	
 	public String userAccount=null;		//用户账号
+	public String userPassWd=null;		//用户密码
 	public String userSex=null;			//性别
 	public String userIC_Number=null;	//用户IC卡号	
 	public String userID_Type=null;		//用户证件类型

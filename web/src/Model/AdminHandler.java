@@ -70,7 +70,7 @@ public class AdminHandler {
     }
 	public static UserInfoBean getUserInfoBean(String userID){
 		UserInfoBean userInfoBean=null;
-		 con = DbPool.getConnection();
+		con = DbPool.getConnection();
 	        String strSql = "select * from user_message where user_id=?;";
 	        try
 	        {
@@ -108,7 +108,7 @@ public class AdminHandler {
 	        }
 		return userInfoBean;
 	}
-	static String setValue(String val)
+	private static String setValue(String val)
 	{
 		
 		if(val!=null&&!val.equals(""))
@@ -141,7 +141,7 @@ public class AdminHandler {
 	        }catch(Exception e)
 	        {
 	            e.printStackTrace();
-	            System.out.println("checkLogin出错!");
+	            System.out.println("数据修改出错!");
 	            return false;
 	        }
 	        if(rs<1)
@@ -149,5 +149,60 @@ public class AdminHandler {
 	        else 
 	        	return true;
 	}
-
+	public static boolean addUser(UserInfoBean userInfoBean)
+	{
+		 con = DbPool.getConnection();
+		 int rs;
+	        String strSql = "INSERT INTO user_message "
+	        		+ "(user_name,password,user_type,card_number,name,sex,ID_type,"
+	        		+ "ID_number,telephone,address,birthdate,remark) values"
+	        		+  setValue(userInfoBean.userAccount)
+	        		+ ", md5(" 	+ setValue(userInfoBean.userPassWd) +")"
+	        		+ ", " 		+ setValue(userInfoBean.userType)
+	        		+ ", "		+ setValue(userInfoBean.userIC_Number)
+	        		+ ", " 		+ setValue(userInfoBean.userName)
+	        		+ ", " 		+ setValue(userInfoBean.userSex)
+	        		+ ", " 		+ setValue(userInfoBean.userID_Type)
+	        		+ ", " 		+ setValue(userInfoBean.userID_Number)
+	        		+ ", " 		+ setValue(userInfoBean.userTel)
+	        		+ ", " 		+ setValue(userInfoBean.userAddress)
+	        		+ ", " 		+ setValue(userInfoBean.userBirthDate)
+	        		+ ",  " 	+ setValue(userInfoBean.userRemark) +");";
+	        try
+	        {
+	            ps = con.prepareStatement(strSql);
+	            System.out.println(strSql);
+	            rs = ps.executeUpdate();
+	        }catch(Exception e)
+	        {
+	            e.printStackTrace();
+	            System.out.println("数据添加出错!");
+	            return false;
+	        }
+	        if(rs<1)
+	        	return false;
+	        else 
+	        	return true;
+	}
+	public static boolean delUser(String UserID)
+	{
+		con = DbPool.getConnection();
+		 int rs;
+	        String strSql = "delete from user_message where user_id="+UserID;
+	        try
+	        {
+	            ps = con.prepareStatement(strSql);
+	            System.out.println(strSql);
+	            rs = ps.executeUpdate();
+	        }catch(Exception e)
+	        {
+	            e.printStackTrace();
+	            System.out.println("数据删除出错!");
+	            return false;
+	        }
+	        if(rs<1)
+	        	return false;
+	        else 
+	        	return true;
+	}
 }
