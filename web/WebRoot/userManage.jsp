@@ -66,8 +66,8 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 							<%=user.userType %>
 						</td>
                         <td>
-                        	<button class="btn btn-xs btn-info"
-                        	onclick="post('userInfo.jsp',{userID:'<%=user.userID %>'})">详情</button>
+                        	<a class="btn btn-xs btn-info"
+                        	href="userInfo.jsp?userID=<%=user.userID %>">详情</a>
                       </td>
 					</tr>
 					<%}	%>
@@ -90,9 +90,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	}
 	</script>
 
-
 	<script type="text/javascript" src="http://cdn.staticfile.org/jquery/2.0.0/jquery.min.js"></script>
-	<!-- Include all compiled plugins (below), or include individual files as needed -->
 	<script type="text/javascript" src="http://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
 </body>
 

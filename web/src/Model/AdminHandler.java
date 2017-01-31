@@ -108,6 +108,46 @@ public class AdminHandler {
 	        }
 		return userInfoBean;
 	}
-
+	static String setValue(String val)
+	{
+		
+		if(val!=null&&!val.equals(""))
+			return "\'"+val+"\'";
+		return "null";
+	}
+	public static boolean setUserInfo(UserInfoBean userInfoBean)
+	{
+		 con = DbPool.getConnection();
+		 int rs;
+	        String strSql = "update user_message set "
+	        		+ "user_name=" 		+ setValue(userInfoBean.userAccount)
+	        		+ ", user_type=" 	+ setValue(userInfoBean.userType)
+	        		+ ", card_number="	+ setValue(userInfoBean.userIC_Number)
+	        		+ ", name=" 		+ setValue(userInfoBean.userName)
+	        		+ ", sex=" 			+ setValue(userInfoBean.userSex)
+	        		+ ", ID_type=" 		+ setValue(userInfoBean.userID_Type)
+	        		+ ", ID_number=" 	+ setValue(userInfoBean.userID_Number)
+	        		+ ", telephone=" 	+ setValue(userInfoBean.userTel)
+	        		+ ", address=" 		+ setValue(userInfoBean.userAddress)
+	        		+ ", birthdate=" 	+ setValue(userInfoBean.userBirthDate)
+	        		+ ", remark= " 		+ setValue(userInfoBean.userRemark)
+	        		+ " where user_id=" + setValue(userInfoBean.userID)
+	        		+ ";";
+	        try
+	        {
+	            ps = con.prepareStatement(strSql);
+	            System.out.println(strSql);
+	            rs = ps.executeUpdate();
+	        }catch(Exception e)
+	        {
+	            e.printStackTrace();
+	            System.out.println("checkLogin出错!");
+	            return false;
+	        }
+	        if(rs<1)
+	        	return false;
+	        else 
+	        	return true;
+	}
 
 }
