@@ -14,7 +14,4 @@ public class UserInfoBean {
 	public String userAddress=null;		//用户地址
 	public String userBirthDate=null;	//用户生日
 	public String userRemark=null;		//备注
-
-
-	
 }

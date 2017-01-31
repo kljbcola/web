@@ -54,7 +54,7 @@
 							<a href="#">卡内余额查询</a>
 						</li>
 						<li>
-							<a href="#">修改个人信息</a>
+							<a href="userInfo.jsp?userID=<%=userBean.userID %>">修改个人信息</a>
 						</li>
 						<li class="divider"/>
 						<li>

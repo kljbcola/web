@@ -50,7 +50,7 @@ public class AdminHandler {
     	return userBeans;
     }
 
-    public static ArrayList<UserBean> findUserBeans(String keyWord,int keyType){
+    public static ArrayList<UserBean> findUserBeans(String keyWord,int keyType){	//未完成
     	ArrayList<UserBean> userBeans=new ArrayList<UserBean>();
     	switch (keyType) {
 		case 1:						//用户ID
@@ -63,7 +63,11 @@ public class AdminHandler {
     	return userBeans;
     }
 
-
+    private static String clearNullString(String str){
+    	if(str==null||str.equals("null"))
+    		return "";
+    	else return str;
+    }
 	public static UserInfoBean getUserInfoBean(String userID){
 		UserInfoBean userInfoBean=null;
 		 con = DbPool.getConnection();
@@ -79,15 +83,15 @@ public class AdminHandler {
 	            	userInfoBean.userID=""+rs.getLong("user_id");
 	            	userInfoBean.userAccount=rs.getString("user_name");	 
 	            	userInfoBean.userType=rs.getString("user_type");
-	            	userInfoBean.userIC_Number=rs.getString("card_number");
+	            	userInfoBean.userIC_Number=clearNullString(rs.getString("card_number"));
 	            	userInfoBean.userName=rs.getString("name");
-	            	userInfoBean.userSex=rs.getString("sex");
-	            	userInfoBean.userID_Type=rs.getString("ID_type");
-	            	userInfoBean.userID_Number=rs.getString("ID_number");
-	            	userInfoBean.userTel=rs.getString("telephone");
-	            	userInfoBean.userAddress=rs.getString("address");
-	            	userInfoBean.userBirthDate=rs.getString("birthdate");
-	            	userInfoBean.userRemark=rs.getString("remark");
+	            	userInfoBean.userSex=clearNullString(rs.getString("sex"));
+	            	userInfoBean.userID_Type=clearNullString(rs.getString("ID_type"));
+	            	userInfoBean.userID_Number=clearNullString(rs.getString("ID_number"));
+	            	userInfoBean.userTel=clearNullString(rs.getString("telephone"));
+	            	userInfoBean.userAddress=clearNullString(rs.getString("address"));
+	            	userInfoBean.userBirthDate=clearNullString(rs.getString("birthdate"));
+	            	userInfoBean.userRemark=clearNullString(rs.getString("remark"));
 	                //释放资源
 	                DbPool.DBClose(con, ps, rs);            
 	            }

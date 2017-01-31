@@ -8,7 +8,11 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 String userID=(String)request.getParameter("userID");
 if(userID==null)
 	response.sendRedirect("index.jsp");
+UserBean user=UserBean.checkSession(session);
 
+if(!user.userID.equals(userID) && !user.userType.equals("管理员"))
+	response.sendRedirect("index.jsp");
+	
 UserInfoBean userinfo=AdminHandler.getUserInfoBean(userID);
 if(userinfo==null)
 	response.sendRedirect("index.jsp");
@@ -39,6 +43,9 @@ if(userinfo==null)
                 locale: 'zh-CN',
                 format: 'YYYY-M-DD'
             });
+            $('#user_sex').selectpicker('val', '<%=userinfo.userSex %>');
+			$('#user_type').selectpicker('val', '<%=userinfo.userType %>');
+			$('#ID_type').selectpicker('val', '<%=userinfo.userID_Type %>');
         });
     </script>
 </head>
@@ -57,8 +64,7 @@ if(userinfo==null)
             <select id="user_sex" class="selectpicker show-tick form-control">
                 <option>男</option>
                 <option>女</option>
-            </select>
-            
+            </select>     
 
             <label for="user_type">用户类型</label>
             <select id="user_type" class="selectpicker show-tick form-control">
@@ -83,12 +89,12 @@ if(userinfo==null)
             
 
             <label for="user_telephone">电话</label>
-            <input class="form-control" id="user_telephone" type="text" value=<%=userinfo.userTel %> />
+            <input class="form-control" id="user_telephone" type="text" value="<%=userinfo.userTel %>" />
             
 
             <label for="user_birthday">生日</label>
             <div class='input-group date' id='user_birthday'>
-                <input type='text' class="form-control" value=<%=userinfo.userBirthDate %> />
+                <input type='text' class="form-control" value="<%=userinfo.userBirthDate %>" />
                 <span class="input-group-addon">
                      <span class="glyphicon glyphicon-calendar"></span>
                 </span>
@@ -96,7 +102,7 @@ if(userinfo==null)
             
 
             <label for="user_remark">备注</label>
-            <input class="form-control" id="user_remark" type="text" value=<%=userinfo.userRemark %> />
+            <input class="form-control" id="user_remark" type="text" value="<%=userinfo.userRemark %>" />
             
             </form>
     </div>
