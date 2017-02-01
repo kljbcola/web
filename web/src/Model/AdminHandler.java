@@ -155,7 +155,7 @@ public class AdminHandler {
 		 int rs;
 	        String strSql = "INSERT INTO user_message "
 	        		+ "(user_name,password,user_type,card_number,name,sex,ID_type,"
-	        		+ "ID_number,telephone,address,birthdate,remark) values"
+	        		+ "ID_number,telephone,address,birthdate,remark) values "+"("
 	        		+  setValue(userInfoBean.userAccount)
 	        		+ ", md5(" 	+ setValue(userInfoBean.userPassWd) +")"
 	        		+ ", " 		+ setValue(userInfoBean.userType)

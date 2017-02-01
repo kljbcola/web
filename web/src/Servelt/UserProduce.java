@@ -96,7 +96,7 @@ public class UserProduce extends HttpServlet {
 				out.println("alert(\"未知操作\")");
 				break;
 			}
-		}
+		} 
 		out.println("history.back(-1);");
 		out.println("</script>");
 	}

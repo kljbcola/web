@@ -35,6 +35,8 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 
 <body>
 	<jsp:include flush="true" page="head.jsp"></jsp:include>
+	
+	<a class="btn btn-primary" href="newUser.jsp">添加用户 </a>
 	<table class="table">
 				<thead><tr>
 					<th>编号</th>
@@ -83,8 +85,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 					</tr>
 					<%}	%>
      </table>
-	<script type="text/javascript">
-	function post(URL, PARAMS) {
+	<script>function post(URL, PARAMS) {
 	  var temp = document.createElement("form");
 	  temp.action = URL;
 	  temp.method = "post";
@@ -99,8 +100,8 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	  document.body.appendChild(temp);
 	  temp.submit();
 	  return temp;
-	}
-	</script>
+	}</script>	
+
 	<script type="text/javascript" src="http://cdn.staticfile.org/jquery/2.0.0/jquery.min.js"></script>
 	<script type="text/javascript" src="http://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
 </body>

@@ -5,16 +5,9 @@ pageEncoding="UTF-8"%>
 <%
 String path = request.getContextPath();
 String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
-String userID=(String)request.getParameter("userID");
-if(userID==null)
-	response.sendRedirect("index.jsp");
 	
 UserBean user=UserBean.checkSession(session);
-if(!user.userID.equals(userID) && !user.userType.equals("管理员"))
-	response.sendRedirect("index.jsp");
-	
-UserInfoBean userinfo=AdminHandler.getUserInfoBean(userID);
-if(userinfo==null)
+if(!user.userType.equals("管理员"))
 	response.sendRedirect("index.jsp");
 %>
 
@@ -43,9 +36,6 @@ if(userinfo==null)
                 locale: 'zh-CN',
                 format: 'YYYY-M-DD'
             });
-            $('#user_sex').selectpicker('val', '<%=userinfo.userSex %>');
-			$('#user_type').selectpicker('val', '<%=userinfo.userType %>');
-			$('#ID_type').selectpicker('val', '<%=userinfo.userID_Type %>');
         });
         function reset(){
             if(confirm("是否重置？")){
@@ -56,6 +46,11 @@ if(userinfo==null)
         	if(document.getElementById("user_account").value.length==0)
             {
                 alert('账号不能为空');
+                return false;
+            }
+            if(document.getElementById("user_password").value!=document.getElementById("user_password_again").value)
+            {
+                alert('确认密码不符');
                 return false;
             }
 			if(document.getElementById("user_name").value.length==0)
@@ -94,15 +89,19 @@ if(userinfo==null)
 	<jsp:include flush="true" page="head.jsp"></jsp:include>
     <div class="container">
         <form id="user_info" class="form-horizontal" action="UserProduce" method="post" role="form">
-
-			<input id="user_id" name="user_id" value="<%=userID %>" type="hidden">
-			<input id="operation" name="operation" value="modify" type="hidden">
+			<input id="operation" name="operation" value="add" type="hidden">
 
             <label for="user_account">账号</label>
-            <input class="form-control" id="user_account" name="user_account" type="text" value="<%=userinfo.userAccount %>"/>
+            <input class="form-control" id="user_account" name="user_account" type="text"/>
+            
+            <label for="user_password">密码</label>
+            <input class="form-control" id="user_password" name="user_password" type="password"/>
+            
+            <label for="user_password_again">确认密码</label>
+            <input class="form-control" id="user_password_again" name="user_password_again" type="password"/>
             
             <label for="user_account">名称</label>
-            <input class="form-control" id="user_name" name="user_name" type="text" value="<%=userinfo.userName %>"/>
+            <input class="form-control" id="user_name" name="user_name" type="text"/>
             
             <label for="user_sex">性别</label>
             <select id="user_sex" name="user_sex" class="selectpicker show-tick form-control">
@@ -118,7 +117,7 @@ if(userinfo==null)
             </select>
             
             <label for="user_card_number">IC卡号</label>
-            <input class="form-control" id="user_card_number" name="user_card_number" type="text" value="<%=userinfo.userIC_Number %>"/>
+            <input class="form-control" id="user_card_number" name="user_card_number" type="text"/>
             
 
             <label for="ID_type">证件类型</label>
@@ -129,18 +128,18 @@ if(userinfo==null)
             
 
             <label for="user_ID_number">证件号</label>
-            <input class="form-control" id="user_ID_number" name="user_ID_number" type="text" maxlength="18" value="<%=userinfo.userID_Number %>"/>
+            <input class="form-control" id="user_ID_number" name="user_ID_number" type="text" maxlength="18"/>
             
 
             <label for="user_telephone">电话</label>
-            <input class="form-control" id="user_telephone" name="user_telephone" type="text" value="<%=userinfo.userTel %>" />
+            <input class="form-control" id="user_telephone" name="user_telephone" type="text" />
             
             <label for="user_address">地址</label>
-            <input class="form-control" id="user_address" name="user_address" type="text" value="<%=userinfo.userAddress %>" />
+            <input class="form-control" id="user_address" name="user_address" type="text"/>
 
             <label for="user_birthday">生日</label>
             <div class='input-group date'>
-                <input id='user_birthday' type='text' name="user_birthday" class="form-control" value="<%=userinfo.userBirthDate %>" />
+                <input id='user_birthday' type='text' name="user_birthday" class="form-control" />
                 <span class="input-group-addon">
                      <span class="glyphicon glyphicon-calendar"></span>
                 </span>
@@ -148,10 +147,10 @@ if(userinfo==null)
             
 
             <label for="user_remark">备注</label>
-            <textarea class="form-control" id="user_remark" name="user_remark"><%=userinfo.userRemark %></textarea>
+            <textarea class="form-control" id="user_remark" name="user_remark"></textarea>
             
             </form>
-            <button class="btn btn-block btn-primary" onclick="save()">保存</button>
+            <button class="btn btn-block btn-primary" onclick="save()">提交</button>
             <button class="btn btn-block btn-warning" onclick="reset()">重置</button>
     </div>
 
