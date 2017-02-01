@@ -97,7 +97,7 @@ public class UserProduce extends HttpServlet {
 				break;
 			}
 		} 
-		out.println("history.back(-1);");
+		out.println("window.location.href(\"userManage.jsp\");");
 		out.println("</script>");
 	}
 
