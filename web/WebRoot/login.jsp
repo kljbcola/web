@@ -1,7 +1,10 @@
 <%@ page contentType="text/html" language="java" import="java.util.*,Bean.UserBean" pageEncoding="utf-8" errorPage=""%>
 <%
-if(UserBean.checkSession(session)!=null)
+if(UserBean.checkSession(session)!=null){
 	response.sendRedirect("index.jsp");
+	return;
+}
+
 
 String path = request.getContextPath();
 String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";

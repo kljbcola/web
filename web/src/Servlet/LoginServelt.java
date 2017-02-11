@@ -1,9 +1,9 @@
-package Servelt;
+package Servlet;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 
 import Bean.UserBean;
+import Model.AlertHandle;
 import Model.LoginHandler;
 
 import javax.servlet.ServletException;
@@ -36,15 +36,18 @@ public class LoginServelt extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {
+		request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
 		response.setContentType("text/html;charset=utf-8");
-		PrintWriter out=response.getWriter();
 		HttpSession session=request.getSession(true);
 		UserBean userBean=UserBean.checkSession(session);
 		if (userBean!=null) {
-			out.println("<script type=\"text/javascript\">");
-			out.println("alert(\"重复登陆！\")");
-			out.println("window.location.href(\"index.jsp\");");
-			out.println("</script>");
+			//out.println("<script type=\"text/javascript\">");
+			//out.println("alert(\"重复登陆！\")");
+			//out.println("window.location.href(\"index.jsp\");");
+			//out.println("</script>");
+			AlertHandle.AlertWarning(session, "警告", "您已登陆！");
+			response.sendRedirect("index.jsp");
 		}
 		else {
 			String name=request.getParameter("loginName");
@@ -53,18 +56,22 @@ public class LoginServelt extends HttpServlet {
 				userBean=LoginHandler.checkLogin(name, pw);
 				if (userBean!=null) {
 					userBean.SetSession(session);
-					out.println("<script type=\"text/javascript\">");
-					out.println("alert(\"登陆成功！\")");
-					out.println("window.location.href(\"index.jsp\");");
-					out.println("</script>");
-					//response.sendRedirect("index.jsp");
+					AlertHandle.Alert(session, "提示", "您已登录成功!");
+					response.sendRedirect("index.jsp");
+					//out.println("<script type=\"text/javascript\">");
+					//out.println("alert(\"登陆成功！\")");
+					//out.println("window.location.href(\"index.jsp\");");
+					//out.println("</script>");
+					
 				}
 				else {
-					out.println("用户名或密码错误！");
+					AlertHandle.AlertWarning(session, "警告", "用户名或密码错误！");
+					response.sendRedirect("login.jsp");
 				}
 			}
 			else {
-				out.println("错误的操作！");
+				AlertHandle.AlertWarning(session, "警告", "错误的操作！");
+				response.sendRedirect("index.jsp");
 			}
 		}
 		

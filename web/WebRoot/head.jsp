@@ -1,5 +1,5 @@
-
 <%@ page contentType="text/html" language="java" import="java.util.*,Model.LoginHandler,Bean.UserBean" pageEncoding="utf-8" errorPage=""%>
+	<jsp:include flush="true" page="Notice.jsp"></jsp:include>
 	<%	UserBean userBean=UserBean.checkSession(session); %>
 	<nav class="navbar navbar-default" role="navigation">
 		<div class="navbar-header">
@@ -51,7 +51,7 @@
 							<a href="#">预约记录查询</a>
 						</li>
 						<li>
-							<a href="#">卡内余额查询</a>
+							<a href="userCard.jsp">卡内余额查询</a>
 						</li>
 						<li>
 							<a href="userInfo.jsp?userID=<%=userBean.userID %>">修改个人信息</a>
@@ -69,12 +69,7 @@
 							登录　　
 							 </a>
 						</li>
-				
 				<%} %>
-				
-				
-				
-				
 			</ul>
 		</div>
 	</nav>

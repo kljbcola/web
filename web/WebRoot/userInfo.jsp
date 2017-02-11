@@ -1,3 +1,4 @@
+<%@page import="Model.AlertHandle"%>
 <%@page import="Bean.UserInfoBean"%>
 <%@ page language="java" 
 import="java.util.*,Bean.UserBean,Model.AdminHandler" 
@@ -6,16 +7,25 @@ pageEncoding="UTF-8"%>
 String path = request.getContextPath();
 String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
 String userID=(String)request.getParameter("userID");
-if(userID==null)
+if(userID==null){
+	AlertHandle.AlertWarning(session, "警告！","非法操作！");
 	response.sendRedirect("index.jsp");
+	return;
+}
 	
 UserBean user=UserBean.checkSession(session);
-if(!user.userID.equals(userID) && !user.userType.equals("管理员"))
+if(user==null||!user.userID.equals(userID) && !user.userType.equals("管理员")){
+	AlertHandle.AlertWarning(session, "警告！","非法操作！");
 	response.sendRedirect("index.jsp");
+	return;
+}
 	
 UserInfoBean userinfo=AdminHandler.getUserInfoBean(userID);
-if(userinfo==null)
+if(userinfo==null){
+	AlertHandle.AlertDanger(session, "错误！","用户信息查找失败！");
 	response.sendRedirect("index.jsp");
+	return;
+}
 %>
 
 <!DOCTYPE html>
@@ -68,12 +78,6 @@ if(userinfo==null)
                 alert('性别不能为空');
                 return false;
             }
-			if(document.getElementById("user_type").value.length==0)
-            {
-                alert('请选择用户类型');
-                return false;
-            }
-            
             if(document.getElementById("user_ID_number").value.length!=0 &&
             document.getElementById("ID_type").value=="身份证" && 
             document.getElementById("user_ID_number").value.length!=18)
@@ -108,13 +112,6 @@ if(userinfo==null)
             <select id="user_sex" name="user_sex" class="selectpicker show-tick form-control">
                 <option>男</option>
                 <option>女</option>
-            </select>     
-
-            <label for="user_type">用户类型</label>
-            <select id="user_type" name="user_type" class="selectpicker show-tick form-control">
-                <option>校内用户</option>
-                <option>校外用户</option>
-                <option>管理员</option>
             </select>
             
             <label for="user_card_number">IC卡号</label>

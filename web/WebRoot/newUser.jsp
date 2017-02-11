@@ -1,4 +1,5 @@
 <%@page import="Bean.UserInfoBean"%>
+<%@page import="Model.AlertHandle"%>
 <%@ page language="java" 
 import="java.util.*,Bean.UserBean,Model.AdminHandler" 
 pageEncoding="UTF-8"%>
@@ -7,8 +8,10 @@ String path = request.getContextPath();
 String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
 	
 UserBean user=UserBean.checkSession(session);
-if(!user.userType.equals("管理员"))
+if(user==null||!user.userType.equals("管理员")){
+	AlertHandle.AlertWarning(session, "警告！","非法操作！");
 	response.sendRedirect("index.jsp");
+}
 %>
 
 <!DOCTYPE html>
@@ -46,6 +49,11 @@ if(!user.userType.equals("管理员"))
         	if(document.getElementById("user_account").value.length==0)
             {
                 alert('账号不能为空');
+                return false;
+            }
+            if(document.getElementById("user_password").value.length==0)
+            {
+                alert('密码不能为空');
                 return false;
             }
             if(document.getElementById("user_password").value!=document.getElementById("user_password_again").value)

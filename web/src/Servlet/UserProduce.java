@@ -1,7 +1,6 @@
-package Servelt;
+package Servlet;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -13,6 +12,7 @@ import javax.servlet.http.HttpSession;
 import Bean.UserBean;
 import Bean.UserInfoBean;
 import Model.AdminHandler;
+import Model.AlertHandle;
 
 @WebServlet("/UserProduce")
 public class UserProduce extends HttpServlet {
@@ -48,12 +48,10 @@ public class UserProduce extends HttpServlet {
 		request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
 		response.setContentType("text/html;charset=utf-8");
-		PrintWriter out=response.getWriter();
-		out.println("<script type=\"text/javascript\">");
-		
 		HttpSession session=request.getSession(false);
+		System.out.println("userProduce");
 		if(session==null)
-			out.println("alert(\"权限不足\")");
+			AlertHandle.AlertWarning(session, "警告", "权限不足!");
 		else {
 			String userID=request.getParameter("user_id");
 			String op=request.getParameter("operation");
@@ -61,44 +59,47 @@ public class UserProduce extends HttpServlet {
 			switch (op) {
 			case "add":
 				if(user==null||!user.userType.equals("管理员"))
-					out.println("alert(\"权限不足\")");
+					AlertHandle.AlertWarning(session, "警告", "权限不足!");
 				else {
 					UserInfoBean userInfoBean=getUserByParameter(request);
 					if(AdminHandler.addUser(userInfoBean))
-						out.println("alert(\"添加用户成功\")");
-					else 
-						out.println("alert(\"添加用户失败\")");
+						AlertHandle.AlertSuccess(session, "成功", "添加用户成功!");
+					else
+						AlertHandle.AlertWarning(session, "失败", "添加用户失败!");
 				}
 				break;
 			case "modify":
 				if(user==null||!(user.userID.equals(userID)||user.userType.equals("管理员")))
-					out.println("alert(\"权限不足\")");
+					AlertHandle.AlertWarning(session, "警告", "权限不足!");
 				else
 				{
 					UserInfoBean userInfoBean=getUserByParameter(request);
-					if(AdminHandler.setUserInfo(userInfoBean))
-						out.println("alert(\"修改成功\")");
+					if(AdminHandler.setUserInfo(userInfoBean)){
+						AlertHandle.AlertSuccess(session, "成功", "修改成功!");
+						UserBean userBean=new UserBean(userInfoBean.userID, userInfoBean.userName,user.userType);
+						userBean.SetSession(session);
+					}
 					else 
-						out.println("alert(\"修改失败\")");
+						AlertHandle.AlertWarning(session, "失败", "修改失败!");
+					
 				}
 				break;
 			case "del":
 				if(user==null||!user.userType.equals("管理员"))
-					out.println("alert(\"权限不足\")");
+					AlertHandle.AlertWarning(session, "警告", "权限不足!");
 				else {
 					if(AdminHandler.delUser(userID))
-						out.println("alert(\"删除用户成功\")");
+						AlertHandle.AlertSuccess(session, "成功", "删除用户成功!");
 					else 
-						out.println("alert(\"删除用户失败\")");
+						AlertHandle.AlertWarning(session, "失败", "删除用户失败!");
 				}
 				break;
 			default:
-				out.println("alert(\"未知操作\")");
+				AlertHandle.AlertWarning(session, "失败", "未知操作!");
 				break;
 			}
 		} 
-		out.println("window.location.href(\"userManage.jsp\");");
-		out.println("</script>");
+		response.sendRedirect("userManage.jsp");
 	}
 
 }

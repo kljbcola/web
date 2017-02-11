@@ -121,7 +121,6 @@ public class AdminHandler {
 		 int rs;
 	        String strSql = "update user_message set "
 	        		+ "user_name=" 		+ setValue(userInfoBean.userAccount)
-	        		+ ", user_type=" 	+ setValue(userInfoBean.userType)
 	        		+ ", card_number="	+ setValue(userInfoBean.userIC_Number)
 	        		+ ", name=" 		+ setValue(userInfoBean.userName)
 	        		+ ", sex=" 			+ setValue(userInfoBean.userSex)

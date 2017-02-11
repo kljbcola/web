@@ -1,12 +1,16 @@
 <%@page import="Model.AdminHandler"%>
+<%@page import="Model.AlertHandle"%>
 <%@ page contentType="text/html" language="java"
  import="java.util.*,Bean.UserBean,Model.AdminHandler" 
  pageEncoding="utf-8" errorPage=""%>
 <%
 UserBean userBean=UserBean.checkSession(session);
 if(userBean==null || !userBean.userType.equals("管理员"))
+{
+	AlertHandle.AlertWarning(session, "警告！","非法操作！");
 	response.sendRedirect("index.jsp");
-
+	return;
+}
 String path = request.getContextPath();
 String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
 %>
