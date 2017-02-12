@@ -14,13 +14,13 @@
                         <strong class="caret"></strong></a>
                         
 					<ul class="dropdown-menu">
-						<li><a href="#">实验室查询</a></li>
+						<li><a href="#">设备查询</a></li>
 						<li><a href="#">预约查询</a></li>
 						
 						<% if(userBean!=null && userBean.userType.equals("管理员")){ %>
 						<li class="divider"/>
 						<li><a href="userManage.jsp">用户管理</a></li>
-						<li><a href="labManage.jsp">实验室管理</a></li>
+						<li><a href="equipManage.jsp">设备管理</a></li>
 						<% } %>
 						<li class="divider"/>
 						<li>

@@ -15,7 +15,7 @@ import Bean.EquipInfoBean;
 import Model.AlertHandle;
 import Model.EquipHandler;
 
-@WebServlet("/LabServlet")
+@WebServlet("/EquipServlet")
 public class EquipServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
     public EquipServlet() {
@@ -28,30 +28,32 @@ public class EquipServlet extends HttpServlet {
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
-	EquipInfoBean getLabByParameter(HttpServletRequest request)	{
-		EquipInfoBean labInfoBean=new EquipInfoBean();
-		labInfoBean.lab_number			=request.getParameter("lab_number");
-		labInfoBean.lab_name			=request.getParameter("lab_name");
-		labInfoBean.lab_location		=request.getParameter("lab_location");
-		labInfoBean.faculty_number		=request.getParameter("faculty_number");
-		labInfoBean.description			=request.getParameter("description");
-		labInfoBean.build_time			=request.getParameter("build_time");
-		labInfoBean.research_area		=request.getParameter("research_area");
-		labInfoBean.attachment			=request.getParameter("attachment");
-		labInfoBean.owner				=request.getParameter("owner");
-		labInfoBean.phone				=request.getParameter("phone");
-		labInfoBean.Email				=request.getParameter("Email");
-		labInfoBean.feature				=request.getParameter("feature");
-		labInfoBean.price				=request.getParameter("price");
-		labInfoBean.overtime_price		=request.getParameter("overtime_price");
-		labInfoBean.min_time			=request.getParameter("min_time");
-		labInfoBean.max_time			=request.getParameter("max_time");
-		labInfoBean.lab_status			=request.getParameter("lab_status");
-		labInfoBean.open_hours			=request.getParameter("open_hours");
-		labInfoBean.close_hours			=request.getParameter("close_hours");
-		labInfoBean.lab_permission		=request.getParameter("lab_permission");
-		labInfoBean.lab_ip	=request.getParameter("lab_ip");
-		return labInfoBean;
+	EquipInfoBean getequipByParameter(HttpServletRequest request)	{
+		EquipInfoBean equipInfoBean=new EquipInfoBean();
+		equipInfoBean.equip_number			=request.getParameter("equip_number");
+		equipInfoBean.equip_name			=request.getParameter("equip_name");
+		equipInfoBean.equip_model			=request.getParameter("equip_model");
+		equipInfoBean.specification			=request.getParameter("specification");
+		equipInfoBean.lab_name				=request.getParameter("lab_name");
+		equipInfoBean.lab_location			=request.getParameter("lab_location");
+		equipInfoBean.faculty				=request.getParameter("faculty");
+		equipInfoBean.description			=request.getParameter("description");
+		equipInfoBean.build_time			=request.getParameter("build_time");
+		equipInfoBean.research_area			=request.getParameter("research_area");
+		equipInfoBean.attachment			=request.getParameter("attachment");
+		equipInfoBean.owner					=request.getParameter("owner");
+		equipInfoBean.phone					=request.getParameter("phone");
+		equipInfoBean.Email					=request.getParameter("Email");
+		equipInfoBean.price					=request.getParameter("price");
+		equipInfoBean.overtime_price		=request.getParameter("overtime_price");
+		equipInfoBean.min_time				=request.getParameter("min_time");
+		equipInfoBean.max_time				=request.getParameter("max_time");
+		equipInfoBean.equip_status			=request.getParameter("equip_status");
+		equipInfoBean.open_hours			=request.getParameter("open_hours");
+		equipInfoBean.close_hours			=request.getParameter("close_hours");
+		equipInfoBean.equip_permission		=request.getParameter("equip_permission");
+		equipInfoBean.equip_ip				=request.getParameter("equip_ip");
+		return equipInfoBean;
 	}
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.setCharacterEncoding("UTF-8");
@@ -63,15 +65,15 @@ public class EquipServlet extends HttpServlet {
 			String op=request.getParameter("operation");
 			switch (op) {
 			case "add":
-				EquipInfoBean labInfoBean=getLabByParameter(request);
-				if(EquipHandler.addLab(labInfoBean))
+				EquipInfoBean equipInfoBean=getequipByParameter(request);
+				if(EquipHandler.addequip(equipInfoBean))
 					AlertHandle.AlertSuccess(session, "成功", "添加实验室成功!");
 				else 
 					AlertHandle.AlertWarning(session, "失败", "添加实验室失败!");
 				break;
 			case "modify":
-					EquipInfoBean labInfoBean1=getLabByParameter(request);
-					if(EquipHandler.setLabInfo(labInfoBean1))
+					EquipInfoBean equipInfoBean1=getequipByParameter(request);
+					if(EquipHandler.setequipInfo(equipInfoBean1))
 						AlertHandle.AlertSuccess(session, "成功", "修改实验室成功!");
 
 					else 
@@ -79,8 +81,8 @@ public class EquipServlet extends HttpServlet {
 				break;
 			case "del":
 					System.out.println("del");
-					String num=request.getParameter("lab_number");
-					if(EquipHandler.delLab(num))
+					String num=request.getParameter("equip_number");
+					if(EquipHandler.delequip(num))
 						AlertHandle.AlertSuccess(session, "成功", "删除用户成功!");
 					else 
 						AlertHandle.AlertWarning(session, "失败", "删除实验室失败!");
@@ -90,7 +92,7 @@ public class EquipServlet extends HttpServlet {
 				break;
 			}
 		} 
-		response.sendRedirect("labManage.jsp");
+		response.sendRedirect("equipManage.jsp");
 	}
 
 }

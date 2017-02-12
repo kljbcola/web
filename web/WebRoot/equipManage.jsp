@@ -25,6 +25,7 @@ else if (s.equals("设备编号")){
 }
 if(s==null)s="设备编号";
 if(c==null)c="";
+System.out.println(sql);
 %>
 
 <!DOCTYPE HTML>
@@ -83,49 +84,58 @@ if(c==null)c="";
   	<sql:setDataSource var="snapshot" driver="com.mysql.jdbc.Driver"
      url="jdbc:mysql://localhost:3306/db?useUnicode=true&characterEncoding=UTF-8&useSSL=false"
      user="datauser"  password="135798"/>
+     
+    <div class="container">
+		<div class="row clearfix">
+			<div class="col-md-12 column">
+				<nav class="navbar navbar-default" role="navigation">
+					<div class="navbar-header">
+					
+						<form class="navbar-form navbar-left" method="post" role="search" action="equipManage.jsp">
+							<div class="form-group">
+								<select id="equip_type" name="select" class="selectpicker show-tick form-control">
+								  <option>设备编号</option>
+								  <option>设备名称</option>
+								  <option>设备院系编号</option>
+								</select>
+								<input id="content" name="content" class="form-control" type="text" placeholder="搜索设备" value="<%=c%>"/>
+							</div>
+							<button class="btn btn-default" type="submit">搜索</button>
+							<a class="btn btn-default btn-success" href="newEquip.jsp">添加</a> 			
+						</form>
+					</div>
+				</nav>
 
-	<form class="container form-signin" method="post" role="search" action="equipManage.jsp">
-		<div class="form-group">
-			<select id="equip_type" name="select" class="selectpicker show-tick form-control">
-			  <option>设备编号</option>
-			  <option>设备名称</option>
-			  <option>设备院系编号</option>
-			</select>
-			
-		
-			<input id="content" name="content" class="form-control" type="text" placeholder="搜索设备" value="<%=c%>"/>
+				<sql:query dataSource="${snapshot}" var="result">
+					<%=sql%>
+				</sql:query>
+				
+				<table class="table">
+						<thead><tr>
+						<th>设备编号</th>
+						<th>设备名称</th>
+						<th>所属院系</th>
+						<th>设备地点</th>
+						<th>权限</th>
+			            </tr></thead>
+					<c:forEach var="row" items="${result.rows}">
+					<tr>
+					   <td><c:out value="${row.equip_number}"/></td>
+					   <td><c:out value="${row.equip_name}"/></td>
+					   <td><c:out value="${row.faculty}"/></td>
+					   <td><c:out value="${row.equip_location}"/></td>
+					   <td><c:out value="${row.equip_permission}"/></td>
+					   <td>
+			              <a class="btn btn-xs btn-info" href="equipInfo.jsp?equip_number=${row.equip_number}">修改</a>
+			           </td>
+			           <td>
+			              <button class="btn btn-xs btn-danger" onclick="del_equipmessage('${row.equip_number}')">删除</button>
+			           </td>
+					</tr>
+					</c:forEach>
+				</table>
+			</div>
 		</div>
-		<button class="btn btn-default" type="submit">搜索</button>
-	</form>
-
-  	<sql:query dataSource="${snapshot}" var="result">
-		<%=sql%>
-	</sql:query>
-	
-	<table class="table">
-			<thead><tr>
-			<th>设备编号</th>
-			<th>设备名称</th>
-			<th>设备地点</th>
-			<th>权限</th>
-			<th> 
-              <a class="btn btn-xs btn-info" href="newequip.jsp">添加</a> 
-            </tr></thead>
-		<c:forEach var="row" items="${result.rows}">
-		<tr>
-		   <td><c:out value="${row.equip_number}"/></td>
-		   <td><c:out value="${row.equip_name}"/></td>
-		   <td><c:out value="${row.equip_location}"/></td>
-		   <td><c:out value="${row.equip_permission}"/></td>
-		   <td>
-              <a class="btn btn-xs btn-info" href="equipInfo.jsp?equip_number=${row.equip_number}">详情</a>
-           </td>
-           <td>
-              <button class="btn btn-xs btn-danger" onclick="del_equipmessage('${row.equip_number}')">删除</button>
-           </td>
-		</tr>
-		</c:forEach>
-	</table>
-    
+	</div>
   </body>
 </html>
