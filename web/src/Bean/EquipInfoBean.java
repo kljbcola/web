@@ -1,6 +1,6 @@
 package Bean;
 
-public class LabInfoBean {
+public class EquipInfoBean {
 	public String lab_number=null;      //实验室编号
 	public String lab_name=null;        //实验室名称
 	public String faculty_number=null;  //所属院系
@@ -17,9 +17,9 @@ public class LabInfoBean {
 	public String min_time=null;        //最少使用时间
 	public String max_time=null;        //最多使用时间
 	public String open_hours=null;      //开始时间
-	public String close_hour=null;      //截止时间
+	public String close_hours=null;      //截止时间
 	public String lab_status=null;      //实验室状态
 	public String attachment=null;      //内含设备
-	public String user_type=null;       //实验室权限
+	public String lab_permission=null;       //实验室权限
 	public String lab_ip=null;          //实验室终端IP地址
 }

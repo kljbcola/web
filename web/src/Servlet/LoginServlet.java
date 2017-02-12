@@ -10,16 +10,16 @@ import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 /**
- * Servlet implementation class LoginServelt
+ * Servlet implementation class LoginServlet
  */
 @WebServlet("/loginCheck")
-public class LoginServelt extends HttpServlet {
+public class LoginServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public LoginServelt() {
+    public LoginServlet() {
         super();
         // TODO Auto-generated constructor stub
     }
