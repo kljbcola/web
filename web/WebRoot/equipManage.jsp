@@ -14,21 +14,26 @@ String path = request.getContextPath();
 String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
 UserBean userBean=UserBean.checkSession(session);
 
-String s = request.getParameter("select");
+String k = request.getParameter("select");
+String s=null;
+if(k!=null)
+	s = new String(k.getBytes("iso8859-1"),"utf-8");
 String c = request.getParameter("content");
 String x = request.getParameter("curpage");
 int curpage;
 if (x==null) curpage=1;
 else curpage=Integer.valueOf(x);
-
+System.out.println(s);
 String sql="";
 if (s==null) sql="SELECT * from equip_message order by equip_number;";
 else if (s.equals("设备编号")){
 	sql="SELECT * from equip_message where equip_number =\""+c+"\";";
 }else if (s.equals("设备名称")){
 	sql="SELECT * from equip_message where equip_name =\""+c+"\";";
-}else if (s.equals("设备院系编号")){
-	sql="SELECT * from equip_message where faculty_number =\""+c+"\";";
+}else if (s.equals("设备院系")){
+	sql="SELECT * from equip_message where faculty =\""+c+"\";";
+}else{
+	sql="SELECT * from equip_message order by equip_number;";
 }
 String to ="equipManage.jsp?";
 if (s!=null)to+="select="+s+"&";
@@ -61,8 +66,12 @@ if (c==null) c="";
 	<link rel="stylesheet" type="text/css" href="styles.css">
 	-->
 	<script>
+		<%if(s!=null&&(s.equals("设备编号")||s.equals("设备名称")||s.equals("设备院系"))){ %>
+		$(function(){
+			$('#select').selectpicker('val', '<%=s %>');
+		});
+		<%}%>
 	
-	$('#equip_type').selectpicker('val', '<%=s%>');
 		function post(URL, PARAMS) {
 		  var temp = document.createElement("form");
 		  temp.action = URL;
@@ -79,6 +88,7 @@ if (c==null) c="";
 		  temp.submit();
 		  return temp;
 		}
+		
 		
 		function del_equipmessage(num){
 			if(confirm("是否删除该设备？")){
@@ -106,12 +116,12 @@ if (c==null) c="";
 			<div class="col-md-12 column">
 				<nav class="navbar navbar-default" role="navigation">
 					<div class="navbar-header">
-							<form class="navbar-form navbar-left" method="post" role="search" action="equipManage.jsp">
+							<form class="navbar-form navbar-left" method="get" role="search" action="equipManage.jsp">
 								<div class="form-group">
-									<select id="equip_type" name="select" class="selectpicker show-tick " style="width:120px;">
+									<select id="select" name="select" class="selectpicker show-tick " style="width:120px;">
 									  <option >设备编号</option>
 									  <option>设备名称</option>
-									  <option>设备院系编号</option>
+									  <option>设备院系</option>
 									</select>
 									<input id="content" name="content" class="form-control" type="text" placeholder="搜索设备" value="<%=c %>"/>
 									
@@ -177,15 +187,11 @@ if (c==null) c="";
 						   <%if(userBean!=null && userBean.userType.equals("管理员")) { %>
 							   <td>
 					              <a class="btn btn-xs btn-info" href="equipInfo.jsp?equip_number=${row.equip_number}">修改</a>
-					           </td>
-					           <td>
 					              <button class="btn btn-xs btn-danger" onclick="del_equipmessage('${row.equip_number}')">删除</button>
 					           </td>
 					      	<%}else { %>
 							   <td>
 					           		<a class="btn btn-xs btn-primary" href="#">详情</a>
-					           </td>
-					           <td>
 					           		<a class="btn btn-xs btn-info" href="#">预约</a>
 					           </td>
 							<%} %>
