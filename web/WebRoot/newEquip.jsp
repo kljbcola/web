@@ -238,7 +238,6 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		  			<button class="btn btn-primary btn-lg" onclick="save()">保存</button>
 		  		</div>
 		  		<br><br>
-		  		<div></div>
 		 </div>
   </body>
 </html>
