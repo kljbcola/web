@@ -1,11 +1,17 @@
 <%@ page language="java" import="java.util.*" pageEncoding="utf-8"%>
 <%@page import="Bean.EquipInfoBean"%>
 <%@page import="Model.EquipHandler"%>
-
+<%@page import="Bean.UserBean"%>
+<%@page import="Model.AlertHandle"%>
 <%
 String path = request.getContextPath();
 String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
 
+UserBean user=UserBean.checkSession(session);
+if(user==null||!user.userType.equals("管理员")){
+	AlertHandle.AlertWarning(session, "警告！","非法操作！");
+	response.sendRedirect("index.jsp");
+}
 %>
 
 <!DOCTYPE HTML>

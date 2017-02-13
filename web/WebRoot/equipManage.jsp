@@ -6,8 +6,6 @@
 <%@page import="Bean.EquipInfoBean"%>
 <%@page import="Bean.UserBean"%>
 <%@page import="Model.EquipHandler"%>
-
-
 <%
 request.setCharacterEncoding("UTF-8");
 String path = request.getContextPath();
@@ -23,9 +21,8 @@ String x = request.getParameter("curpage");
 int curpage;
 if (x==null) curpage=1;
 else curpage=Integer.valueOf(x);
-System.out.println(s);
 String sql="";
-if (s==null) sql="SELECT * from equip_message order by equip_number;";
+if (s==null||c==null||c.equals("")) sql="SELECT * from equip_message order by equip_number;";
 else if (s.equals("设备编号")){
 	sql="SELECT * from equip_message where equip_number =\""+c+"\";";
 }else if (s.equals("设备名称")){
@@ -68,7 +65,7 @@ if (c==null) c="";
 	<script>
 		<%if(s!=null&&(s.equals("设备编号")||s.equals("设备名称")||s.equals("设备院系"))){ %>
 		$(function(){
-			$('#select').selectpicker('val', '<%=s %>');
+			$('#select').selectpicker('val', '<%=s%>');
 		});
 		<%}%>
 	
@@ -126,7 +123,9 @@ if (c==null) c="";
 									<input id="content" name="content" class="form-control" type="text" placeholder="搜索设备" value="<%=c %>"/>
 									
 									<button class="btn btn-default btn-primary" type="submit">搜索</button>
+									<%if(userBean!=null && userBean.userType.equals("管理员")) { %>
 									<a class="btn btn-default btn-success" href="newEquip.jsp">添加</a>
+									<%} %>
 								</div>
 							</form>
 					</div>

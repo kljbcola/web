@@ -20,7 +20,6 @@
 						<% if(userBean!=null && userBean.userType.equals("管理员")){ %>
 						<li class="divider"><li>
 						<li><a href="userManage.jsp">用户管理</a></li>
-						<li><a href="equipManage.jsp">设备管理</a></li>
 						<% } %>
 						<li class="divider"/>
 						<li>
@@ -29,11 +28,6 @@
 					</ul>
 				</li>
 			</ul>
-			<form class="navbar-form navbar-left" role="search">
-				<div class="form-group">
-					<input class="form-control" type="text" placeholder="搜索实验室"/>
-				</div> <button class="btn btn-default" type="submit">搜索</button>
-			</form>
 			<ul class="nav navbar-nav navbar-right">
 			
 			<% 
