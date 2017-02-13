@@ -12,6 +12,7 @@ if(user==null||!user.userType.equals("管理员")){
 	AlertHandle.AlertWarning(session, "警告！","非法操作！");
 	response.sendRedirect("index.jsp");
 }
+int row=3;
 %>
 
 <!DOCTYPE HTML>
@@ -139,100 +140,105 @@ if(user==null||!user.userType.equals("管理员")){
 									<label for="equip_number">设备编号*</label>
 									<input class="form-control" id="equip_number" name="equip_number" type="text"/>
 									
-									<label for="equip_name">设备名称*</label>
-									<input class="form-control" id="equip_name" name="equip_name" type="text"/>
-									
 									<label for="equip_model">设备型号*</label>
-									<input class="form-control" id="equip_model" name="equip_model" type="text"/>
+									<input class="form-control" id="equip_model" name="equip_model" type="text" />
 									
 									<label for="lab_name">所在实验室*</label>
 									<input class="form-control" id="lab_name" name="lab_name" type="text" />
 									
 									<label for="lab_location">实验室所在地址*</label>
-									<input class="form-control" id="lab_location" name="lab_location" type="text" />
+									<input class="form-control" id="lab_location" name="lab_location" type="text"/>
 									
 									<label for="owner">负责人</label>
 									<input class="form-control" id="owner" name="owner" type="text" />
 									
+									<label for="Email">电子邮件</label>
+									<input class="form-control" id="Email" name="Email" type="text" />
+									
 									<label for="price">价格*</label>
-									<input class="form-control" id="price" name="price" type="text"   />
+									<input class="form-control" id="price" name="price" type="text"  />
 									
 									<label for="min_time">最少使用时间</label>
 									<input class="form-control" id="min_time" name="min_time" type="text"  />
 									
 									<label for="open_hours">开始时间</label>
 									<div class='input-group date'>
-					                <input id='open_hours' type='text' name="open_hours" class="form-control" />
-					                <span class="input-group-addon">
-					                     <span class="glyphicon glyphicon-calendar"></span>
-					                </span>
+						                <input id='open_hours' type='text' name="open_hours" class="form-control" />
+						                <span class="input-group-addon">
+						                     <span class="glyphicon glyphicon-calendar"></span>
+						                </span>
 					            	</div>
 									
 									<label for="equip_status">设备状态*</label>
-									<select id="equip_status" name="equip_status" class="selectpicker show-tick form-control"  >
+									<select id="equip_status" name="equip_status" class="selectpicker show-tick form-control" >
 										<option>开放</option>
 										<option>关闭</option>
 									</select>
 									
 									<label for="description">设备描述</label>
-									<input class="form-control" id="description" name="description" type="text" />
-									
+									<textarea class="form-control" id="description" name="description" rows="<%=row %>" cols="20" wrap="hard"></textarea>
+								
 									<label for="attachment">主要附件</label>
-									<input class="form-control" id="attachment" name="attachment" type="text" />
+									<textarea class="form-control" id="attachment" name="attachment" rows="<%=row %>" cols="20" wrap="hard"></textarea>
+								
 								</div>
-						
+								
+								
 								<div class="col-md-6 column">
 								
-									<label for="faculty">所属院系*</label>
-									<input class="form-control" id="faculty" name="faculty" type="text" />
-									
-									
-									<label for="equip_location">设备地址*</label>
-									<input class="form-control" id="equip_location" name="equip_location" type="text" />
-									
-									<label for="specification">技术指标*</label>
-									<input class="form-control" id="specification" name="specification" type="text"/>
-									
-									<label for="build_time">建立时间</label>
-									<div class='input-group date' >
-										<input type='text' id='build_time' name="build_time" class="form-control" />
-										<span class="input-group-addon">
-											 <span class="glyphicon glyphicon-calendar"></span>
-										</span>
-									</div>
-									
-									
-									<label for="research_area">研究领域</label>
-									<input class="form-control" id="research_area" name="research_area" type="text" />
-									
-									
-									<label for="phone">联系电话</label>
-									<input class="form-control" id="phone" name="phone" type="text" />				
-									
-									<label for="overtime_price">超时价格*</label>
-									<input class="form-control" id="overtime_price" name="overtime_price" type="text" />
-									
-									<label for="max_time">最多使用时间</label>
-									<input class="form-control" id="max_time" name="max_time" type="text" />
+								<label for="equip_name">设备名称*</label>
+								<input class="form-control" id="equip_name" name="equip_name" type="text" />
 								
-									<label for="close_hours">截止时间</label>
-									<div class='input-group date'>
-					                <input id='close_hours' type='text' name="close_hours" class="form-control" />
-					                <span class="input-group-addon">
-					                     <span class="glyphicon glyphicon-calendar"></span>
-					                </span>
-					            	</div>
-									
-									<label for="equip_permission">设备权限*</label>
-									<select id="equip_permission" name="equip_permission"  class="selectpicker show-tick form-control" >
-										<option>校内用户</option>
-										<option>校外用户</option>
-										<option>管理员</option>
-									</select>
-									
-									<label for="equip_ip">设备终端IP地址*</label>
-									<input class="form-control" id="equip_ip" name="equip_ip" type="text" />
+								<label for="faculty">所属院系*</label>
+								<input class="form-control" id="faculty" name="faculty" type="text"/>
+								
+								
+								<label for="equip_location">设备地址*</label>
+								<input class="form-control" id="equip_location" name="equip_location" type="text" />
+								
+								<label for="build_time">建立时间</label>
+								<div class='input-group date' >
+									<input type='text' id='build_time' name="build_time" class="form-control" />
+									<span class="input-group-addon">
+										 <span class="glyphicon glyphicon-calendar"></span>
+									</span>
 								</div>
+								
+								<label for="research_area">研究领域</label>
+								<input class="form-control" id="research_area" name="research_area" type="text" />
+									
+								
+								<label for="phone">联系电话</label>
+								<input class="form-control" id="phone" name="phone" type="text" />				
+								
+								<label for="equip_ip">设备终端IP地址*</label>
+								<input class="form-control" id="equip_ip" name="equip_ip" type="text" />
+							
+								<label for="overtime_price">超时价格*</label>
+								<input class="form-control" id="overtime_price" name="overtime_price" type="text" />
+								
+								<label for="max_time">最多使用时间</label>
+								<input class="form-control" id="max_time" name="max_time" type="text"/>
+							
+								<label for="close_hours">截止时间</label>
+								<div class='input-group date'>
+				                <input id='close_hours' type='text' name="close_hours" class="form-control" />
+				                <span class="input-group-addon">
+				                     <span class="glyphicon glyphicon-calendar"></span>
+				                </span>
+				            	</div>
+								
+								<label for="equip_permission">设备权限*</label>
+								<select id="equip_permission" name="equip_permission" class="selectpicker show-tick form-control" >
+									<option>校内用户</option>
+									<option>校外用户</option>
+									<option>管理员</option>
+								</select>
+								
+								<label for="specification">技术指标*</label>
+								<textarea class="form-control" id="specification" name="specification" rows="<%=row %>" cols="20" wrap="hard"> </textarea>
+								
+							</div>
 							</form>	
 						</div>
 					  

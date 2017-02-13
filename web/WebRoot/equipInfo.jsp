@@ -12,6 +12,7 @@ if(equipnum==null)
 EquipInfoBean equipinfo=EquipHandler.getEquipInfoBean(equipnum);
 if(equipinfo==null)
 	response.sendRedirect("index.jsp");
+int row=4;
 %>
 
 <!DOCTYPE HTML>
@@ -152,6 +153,9 @@ if(equipinfo==null)
 						<label for="owner">负责人</label>
 						<input class="form-control" id="owner" name="owner" type="text" value="<%=equipinfo.owner %>"/>
 						
+						<label for="Email">电子邮件</label>
+						<input class="form-control" id="Email" name="Email" type="text" value="<%=equipinfo.Email %>"/>
+						
 						<label for="price">价格*</label>
 						<input class="form-control" id="price" name="price" type="text"  value="<%=equipinfo.price %>" />
 						
@@ -173,10 +177,11 @@ if(equipinfo==null)
 						</select>
 						
 						<label for="description">设备描述</label>
-						<input class="form-control" id="description" name="description" type="text" value="<%=equipinfo.description %>"/>
-						
+						<textarea class="form-control" id="description" name="description" rows="<%=row %>" cols="20" wrap="hard"><%=equipinfo.description %>"</textarea>
+					
 						<label for="attachment">主要附件</label>
-						<input class="form-control" id="attachment" name="attachment" type="text" value="<%=equipinfo.attachment %>"/>
+						<textarea class="form-control" id="attachment" name="attachment" rows="<%=row %>" cols="20" wrap="hard"><%=equipinfo.attachment %>"</textarea>
+					
 					</div>
 					
 					
@@ -188,9 +193,6 @@ if(equipinfo==null)
 					
 					<label for="equip_location">设备地址*</label>
 					<input class="form-control" id="equip_location" name="equip_location" type="text" value="<%=equipinfo.lab_location %>"/>
-					
-					<label for="specification">技术指标*</label>
-					<input class="form-control" id="specification" name="specification" type="text" value="<%=equipinfo.specification %>"/>
 					
 					<label for="build_time">建立时间</label>
 					<div class='input-group date' >
@@ -207,6 +209,9 @@ if(equipinfo==null)
 					<label for="phone">联系电话</label>
 					<input class="form-control" id="phone" name="phone" type="text" value="<%=equipinfo.phone %>"/>				
 					
+					<label for="equip_ip">设备终端IP地址*</label>
+					<input class="form-control" id="equip_ip" name="equip_ip" type="text" value="<%=equipinfo.equip_ip %>" />
+				
 					<label for="overtime_price">超时价格*</label>
 					<input class="form-control" id="overtime_price" name="overtime_price" type="text" value="<%=equipinfo.overtime_price %>"/>
 					
@@ -228,8 +233,9 @@ if(equipinfo==null)
 						<option>管理员</option>
 					</select>
 					
-					<label for="equip_ip">设备终端IP地址*</label>
-					<input class="form-control" id="equip_ip" name="equip_ip" type="text" value="<%=equipinfo.equip_ip %>" />
+					<label for="specification">技术指标*</label>
+					<textarea class="form-control" id="specification" name="specification" rows="<%=row %>" cols="20" wrap="hard"><%=equipinfo.specification %>"</textarea>
+					
 				</div>
 	  		 </form>
 	  		

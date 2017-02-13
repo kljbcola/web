@@ -24,6 +24,22 @@ public class EquipHandler {
     	else return str;
     }
     
+    public static String changeBank(String a){
+    	String b="";
+    	for (int i=0; i<a.length(); i++){
+    		if (a.charAt(i)!='\n'&&a.charAt(i)!='\r') b=b+a.charAt(i);
+    		else b+="</p><p>";
+    	}
+    	return b;
+    }
+    public static EquipInfoBean changeBank(EquipInfoBean equip){
+    	equip.description=changeBank(equip.description);
+    	equip.attachment=changeBank(equip.attachment);
+    	equip.specification=changeBank(equip.specification);
+    	System.out.println(equip.specification+"~~~~~~~~~~~~~");
+    	return equip;
+    }
+    
     public static EquipInfoBean getEquipInfoBean(String equipnum){
     	System.out.println(equipnum);
     	EquipInfoBean equipInfoBean=null;

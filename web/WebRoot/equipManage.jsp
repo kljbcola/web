@@ -190,7 +190,7 @@ if (c==null) c="";
 					           </td>
 					      	<%}else { %>
 							   <td>
-					           		<a class="btn btn-xs btn-primary" href="#">详情</a>
+					           		<a class="btn btn-xs btn-primary" href="equipDisplay.jsp?equip_number=${row.equip_number}">详情</a>
 					           		<a class="btn btn-xs btn-info" href="#">预约</a>
 					           </td>
 							<%} %>
