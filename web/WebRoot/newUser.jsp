@@ -45,10 +45,58 @@ if(user==null||!user.userType.equals("管理员")){
                 window.location.reload(true);
             }
         }
+        var userflag=false;
+        function showHint()
+		{
+		  var xmlhttp;
+		  var str=$('#user_account').val().toLowerCase();
+		  if (str.length<4)
+		  { 
+		    document.getElementById("account_hint").innerHTML="账号*(账号长度不足)";
+		    userflag=false;
+		    return;
+		  }
+		  if (window.XMLHttpRequest) {
+		    // IE7+, Firefox, Chrome, Opera, Safari 浏览器执行代码
+		    xmlhttp=new XMLHttpRequest();
+		  }
+		  else {
+		    // IE6, IE5 浏览器执行代码
+		    xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+		  }
+		  xmlhttp.onreadystatechange=function()
+		  {
+		    if (xmlhttp.readyState==4 && xmlhttp.status==200)
+		    {
+		    	if(xmlhttp.responseText=="true"){
+		    		userflag=false;
+		    		document.getElementById("account_hint").innerHTML="账号*(当前账号已存在！)";
+		    	}
+		    	else{
+		    		userflag=true;
+		    		document.getElementById("account_hint").innerHTML="账号*(当前账号可用！)";
+		    	}
+		    }
+		  }
+		  xmlhttp.open("GET","FastQuery?account="+str,true);
+		  xmlhttp.send();
+		}
+        
+        
         function save(){
+        	if(!userflag)
+            {
+                alert('输入账号无效');
+                return false;
+            }
         	if(document.getElementById("user_account").value.length==0)
             {
                 alert('账号不能为空');
+                return false;
+            }
+            if(document.getElementById("user_account").value.length<4)
+            {
+                alert('账号长度必须大于等于4');
                 return false;
             }
             if(document.getElementById("user_password").value.length==0)
@@ -99,25 +147,25 @@ if(user==null||!user.userType.equals("管理员")){
         <form id="user_info" class="form-horizontal" action="UserProduce" method="post" role="form">
 			<input id="operation" name="operation" value="add" type="hidden">
 
-            <label for="user_account">账号</label>
-            <input class="form-control" id="user_account" name="user_account" type="text"/>
+            <label for="user_account" id="account_hint">账号*</label>
+            <input class="form-control" id="user_account" onchange="showHint()" maxlength="16" name="user_account" type="text"/>
             
-            <label for="user_password">密码</label>
+            <label for="user_password">密码*</label>
             <input class="form-control" id="user_password" name="user_password" type="password"/>
             
-            <label for="user_password_again">确认密码</label>
+            <label for="user_password_again">确认密码*</label>
             <input class="form-control" id="user_password_again" name="user_password_again" type="password"/>
             
-            <label for="user_account">名称</label>
+            <label for="user_account">名称*</label>
             <input class="form-control" id="user_name" name="user_name" type="text"/>
             
-            <label for="user_sex">性别</label>
+            <label for="user_sex">性别*</label>
             <select id="user_sex" name="user_sex" class="selectpicker show-tick form-control">
                 <option>男</option>
                 <option>女</option>
             </select>     
 
-            <label for="user_type">用户类型</label>
+            <label for="user_type">用户类型*</label>
             <select id="user_type" name="user_type" class="selectpicker show-tick form-control">
                 <option>校内用户</option>
                 <option>校外用户</option>

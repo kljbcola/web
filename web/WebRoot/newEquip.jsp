@@ -54,6 +54,37 @@ int row=3;
                 window.location.reload(true);
             }
         }
+        
+        var userflag=false;
+        function showHint()
+		{
+		  var xmlhttp;
+		  var str=$('#equip_number').val();
+		  if (window.XMLHttpRequest) {
+		    // IE7+, Firefox, Chrome, Opera, Safari 浏览器执行代码
+		    xmlhttp=new XMLHttpRequest();
+		  }
+		  else {
+		    // IE6, IE5 浏览器执行代码
+		    xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+		  }
+		  xmlhttp.onreadystatechange=function()
+		  {
+		    if (xmlhttp.readyState==4 && xmlhttp.status==200)
+		    {
+		    	if(xmlhttp.responseText=="true"){
+		    		userflag=false;
+		    		document.getElementById("equip_hint").innerHTML="设备编号*(当前编号已存在！)";
+		    	}
+		    	else{
+		    		userflag=true;
+		    		document.getElementById("equip_hint").innerHTML="设备编号*(当前编号可用！)";
+		    	}
+		    }
+		  }
+		  xmlhttp.open("GET","FastQuery?equipid="+str,true);
+		  xmlhttp.send();
+		}
         function save(){
 			if(document.getElementById("equip_name").value.length==0)
             {
@@ -137,8 +168,8 @@ int row=3;
 								<div class=" col-md-6 column">
 									<input id="operation" name="operation" value="add" type="hidden">
 									
-									<label for="equip_number">设备编号*</label>
-									<input class="form-control" id="equip_number" name="equip_number" type="text"/>
+									<label for="equip_number" id="equip_hint">设备编号*</label>
+									<input class="form-control" id="equip_number" onchange="showHint()" name="equip_number" type="number"/>
 									
 									<label for="equip_model">设备型号*</label>
 									<input class="form-control" id="equip_model" name="equip_model" type="text" />

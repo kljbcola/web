@@ -63,11 +63,6 @@ if(userinfo==null){
             }
         }
         function save(){
-        	if(document.getElementById("user_account").value.length==0)
-            {
-                alert('账号不能为空');
-                return false;
-            }
 			if(document.getElementById("user_name").value.length==0)
             {
                 alert('名称不能为空');
@@ -102,9 +97,6 @@ if(userinfo==null){
 			<input id="user_id" name="user_id" value="<%=userID %>" type="hidden">
 			<input id="operation" name="operation" value="modify" type="hidden">
 
-            <label for="user_account">账号</label>
-            <input class="form-control" id="user_account" name="user_account" type="text" value="<%=userinfo.userAccount %>"/>
-            
             <label for="user_account">名称</label>
             <input class="form-control" id="user_name" name="user_name" type="text" value="<%=userinfo.userName %>"/>
             
