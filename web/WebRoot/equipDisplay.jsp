@@ -15,13 +15,14 @@ String bank="~      ";
 if(equipnum==null)
 	response.sendRedirect("index.jsp");
 EquipInfoBean equipinfo=EquipHandler.getEquipInfoBean(equipnum);
-equipinfo=EquipHandler.changeBank(equipinfo);
 if(equipinfo==null)
 	response.sendRedirect("index.jsp");
+equipinfo=EquipHandler.changeBank(equipinfo);
+
 System.out.println(equipinfo.specification);
 %>
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!DOCTYPE HTML>
 <html>
   <head>
     <base href="<%=basePath%>">

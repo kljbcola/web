@@ -183,17 +183,16 @@ if (c==null) c="";
 						   <td><c:out value="${row.faculty}"/></td>
 						   <td><c:out value="${row.lab_location}"/></td>
 						   <td><c:out value="${row.equip_permission}"/></td>
+						   <td>
+						   <a class="btn btn-xs btn-primary" href="equipDisplay.jsp?equip_number=${row.equip_number}">详情</a>
 						   <%if(userBean!=null && userBean.userType.equals("管理员")) { %>
-							   <td>
 					              <a class="btn btn-xs btn-info" href="equipInfo.jsp?equip_number=${row.equip_number}">修改</a>
 					              <button class="btn btn-xs btn-danger" onclick="del_equipmessage('${row.equip_number}')">删除</button>
-					           </td>
-					      	<%}else { %>
-							   <td>
-					           		<a class="btn btn-xs btn-primary" href="equipDisplay.jsp?equip_number=${row.equip_number}">详情</a>
+					      	<%}else { %>	
 					           		<a class="btn btn-xs btn-info" href="#">预约</a>
-					           </td>
+					          
 							<%} %>
+							</td>
 						</tr>
 					<%} %>
 					</c:forEach>
