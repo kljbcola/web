@@ -36,6 +36,7 @@ else if (s.equals("账户")){
 	sql="SELECT * from user_message where name =\""+c+"\";";
 }else{
 	sql="SELECT * from user_message order by user_id;";
+	
 }
 String to ="userManage.jsp?";
 if (s!=null)to+="select="+s+"&";
