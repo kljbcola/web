@@ -150,6 +150,7 @@ if (c==null) c="";
 			    <c:forEach var="row" items="${result.rows}">
 			    	<% Pagenum=Pagenum+1; %>
 			    </c:forEach>
+			    
 			    <%
 			    	int sum=(Pagenum-1)/Pagesize+1;  //页数
 			    	
@@ -177,7 +178,10 @@ if (c==null) c="";
 						cur=(Pagenum-1)/Pagesize+1;
 						if (cur==curpage){
 					 %>
-						<tr>
+						 <% if (Pagenum%2==0) {%> 
+						 	<tr class="success"> <%}else { %>
+							<tr>
+						 <%} %>
 						   <td><c:out value="${row.equip_number}"/></td>
 						   <td><c:out value="${row.equip_name}"/></td>
 						   <td><c:out value="${row.faculty}"/></td>
