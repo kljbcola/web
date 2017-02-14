@@ -23,22 +23,21 @@ int row=4;
     
     <title>设备信息</title>
     
-	<script src="http://cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script>
-    <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
-    <script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
-
-
-    <link href="http://cdn.bootcss.com/bootstrap-select/2.0.0-beta1/css/bootstrap-select.min.css" rel="stylesheet">
-    <script src="http://cdn.bootcss.com/bootstrap-select/2.0.0-beta1/js/bootstrap-select.min.js"></script>
-
-    <link href="http://cdn.bootcss.com/bootstrap-datetimepicker/4.17.45/css/bootstrap-datetimepicker.css" rel="stylesheet">
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.js"></script>
-    <script src="http://cdn.bootcss.com/bootstrap-datetimepicker/4.17.45/js/bootstrap-datetimepicker.min.js"></script>
-	
-
+	<script src="js/jquery.min.js"></script>
+	<link href="css/bootstrap.min.css" rel="stylesheet">
+	<script src="js/bootstrap.min.js"></script>
+    <link href="css/bootstrap-select.min.css" rel="stylesheet">
+    <script src="js/bootstrap-select.min.js"></script>
+    <link href="css/bootstrap-datetimepicker.min.css" rel="stylesheet">
+    <script src="js/moment-with-locales.min.js"></script>
+    <script src="js/bootstrap-datetimepicker.min.js"></script>
 	
 	    <script type="text/javascript">
         $(function () {
+        	$('#build_time').datetimepicker({
+                locale: 'zh-CN',
+                format: 'YYYY-MM-DD'
+            });
         	$('#open_hours').datetimepicker({
                 locale: 'zh-CN',
                 format: 'HH:mm'
@@ -162,7 +161,7 @@ int row=4;
 						<label for="min_time">最少使用时间</label>
 						<input class="form-control" id="min_time" name="min_time" type="text" value="<%=equipinfo.min_time %>" />
 						
-						<label for="open_hours">开始时间</label>
+						<label for="open_hours">设备开放时间</label>
 						<div class='input-group date'>
 			                <input id='open_hours' type='text' name="open_hours" class="form-control" value="<%=equipinfo.open_hours %>"/>
 			                <span class="input-group-addon">
@@ -194,7 +193,7 @@ int row=4;
 					<label for="equip_location">设备地址*</label>
 					<input class="form-control" id="equip_location" name="equip_location" type="text" value="<%=equipinfo.lab_location %>"/>
 					
-					<label for="build_time">建立时间</label>
+					<label for="build_time">购入时间</label>
 					<div class='input-group date' >
 						<input type='text' id='build_time' name="build_time" class="form-control" value="<%=equipinfo.build_time %>"/>
 						<span class="input-group-addon">
@@ -218,7 +217,7 @@ int row=4;
 					<label for="max_time">最多使用时间</label>
 					<input class="form-control" id="max_time" name="max_time" type="text" value="<%=equipinfo.max_time %>"/>
 				
-					<label for="close_hours">截止时间</label>
+					<label for="close_hours">设备截止时间</label>
 					<div class='input-group date'>
 	                <input id='close_hours' type='text' name="close_hours" class="form-control" value="<%=equipinfo.close_hours %>"/>
 	                <span class="input-group-addon">

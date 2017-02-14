@@ -20,8 +20,11 @@ String userID=user.userID;
      <meta charset="utf-8"/>
 	<title>卡内余额</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-	<link href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet">
-
+	<script src="js/jquery.min.js"></script>
+	<link href="css/bootstrap.min.css" rel="stylesheet">
+	<script src="js/bootstrap.min.js"></script>
+    <link href="css/bootstrap-select.min.css" rel="stylesheet">
+    <script src="js/bootstrap-select.min.js"></script>
 	<!--
 	<link rel="stylesheet" type="text/css" href="styles.css">
 	-->

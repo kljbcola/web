@@ -23,22 +23,23 @@ int row=3;
     
     <title>添加设备</title>
     
-	<script src="http://cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script>
-    <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
-    <script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
-
-
-    <link href="http://cdn.bootcss.com/bootstrap-select/2.0.0-beta1/css/bootstrap-select.min.css" rel="stylesheet">
-    <script src="http://cdn.bootcss.com/bootstrap-select/2.0.0-beta1/js/bootstrap-select.min.js"></script>
-
-    <link href="http://cdn.bootcss.com/bootstrap-datetimepicker/4.17.45/css/bootstrap-datetimepicker.css" rel="stylesheet">
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.js"></script>
-    <script src="http://cdn.bootcss.com/bootstrap-datetimepicker/4.17.45/js/bootstrap-datetimepicker.min.js"></script>
+	<script src="js/jquery.min.js"></script>
+	<link href="css/bootstrap.min.css" rel="stylesheet">
+	<script src="js/bootstrap.min.js"></script>
+    <link href="css/bootstrap-select.min.css" rel="stylesheet">
+    <script src="js/bootstrap-select.min.js"></script>
+    <link href="css/bootstrap-datetimepicker.min.css" rel="stylesheet">
+    <script src="js/moment-with-locales.min.js"></script>
+    <script src="js/bootstrap-datetimepicker.min.js"></script>
 	
 
 	
 	 <script type="text/javascript">
         $(function () {
+        	$('#build_time').datetimepicker({
+                locale: 'zh-CN',
+                format: 'YYYY-MM-DD'
+            });
         	$('#open_hours').datetimepicker({
                 locale: 'zh-CN',
                 format: 'hh:mm'
@@ -55,11 +56,17 @@ int row=3;
             }
         }
         
-        var userflag=false;
+        var equipflag=false;
         function showHint()
 		{
 		  var xmlhttp;
 		  var str=$('#equip_number').val();
+		  if (str.length==0)
+		  { 
+		    document.getElementById("equip_hint").innerHTML="设备编号*(编号长度不足)";
+		    equipflag=false;
+		    return;
+		  }
 		  if (window.XMLHttpRequest) {
 		    // IE7+, Firefox, Chrome, Opera, Safari 浏览器执行代码
 		    xmlhttp=new XMLHttpRequest();
@@ -68,16 +75,17 @@ int row=3;
 		    // IE6, IE5 浏览器执行代码
 		    xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
 		  }
+		  
 		  xmlhttp.onreadystatechange=function()
 		  {
 		    if (xmlhttp.readyState==4 && xmlhttp.status==200)
 		    {
 		    	if(xmlhttp.responseText=="true"){
-		    		userflag=false;
+		    		equipflag=false;
 		    		document.getElementById("equip_hint").innerHTML="设备编号*(当前编号已存在！)";
 		    	}
 		    	else{
-		    		userflag=true;
+		    		equipflag=true;
 		    		document.getElementById("equip_hint").innerHTML="设备编号*(当前编号可用！)";
 		    	}
 		    }
@@ -86,6 +94,11 @@ int row=3;
 		  xmlhttp.send();
 		}
         function save(){
+        if(!equipflag)
+            {
+                alert('设备编号有误');
+                return false;
+            }
 			if(document.getElementById("equip_name").value.length==0)
             {
                 alert('设备名称不能为空');

@@ -120,7 +120,7 @@ public class AdminHandler {
 		 con = DbPool.getConnection();
 		 int rs;
 	        String strSql = "update user_message set "
-	        		+ ", card_number="	+ setValue(userInfoBean.userIC_Number)
+	        		+ "  card_number="	+ setValue(userInfoBean.userIC_Number)
 	        		+ ", name=" 		+ setValue(userInfoBean.userName)
 	        		+ ", sex=" 			+ setValue(userInfoBean.userSex)
 	        		+ ", ID_type=" 		+ setValue(userInfoBean.userID_Type)

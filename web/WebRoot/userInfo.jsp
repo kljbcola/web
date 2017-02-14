@@ -34,17 +34,14 @@ if(userinfo==null){
 <head>
     <meta charset="UTF-8">
     <title>用户详情</title>
-    <script src="http://cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script>
-    <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
-    <script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
-
-
-    <link href="http://cdn.bootcss.com/bootstrap-select/2.0.0-beta1/css/bootstrap-select.min.css" rel="stylesheet">
-    <script src="http://cdn.bootcss.com/bootstrap-select/2.0.0-beta1/js/bootstrap-select.min.js"></script>
-
-    <link href="http://cdn.bootcss.com/bootstrap-datetimepicker/4.17.45/css/bootstrap-datetimepicker.css" rel="stylesheet">
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.js"></script>
-    <script src="http://cdn.bootcss.com/bootstrap-datetimepicker/4.17.45/js/bootstrap-datetimepicker.min.js"></script>
+	<script src="js/jquery.min.js"></script>
+	<link href="css/bootstrap.min.css" rel="stylesheet">
+	<script src="js/bootstrap.min.js"></script>
+    <link href="css/bootstrap-select.min.css" rel="stylesheet">
+    <script src="js/bootstrap-select.min.js"></script>
+    <link href="css/bootstrap-datetimepicker.min.css" rel="stylesheet">
+    <script src="js/moment-with-locales.min.js"></script>
+    <script src="js/bootstrap-datetimepicker.min.js"></script>
 
 
     <script type="text/javascript">

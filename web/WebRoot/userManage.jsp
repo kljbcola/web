@@ -53,21 +53,14 @@ if (c==null) c="";
     <meta http-equiv="Content-Type" content="text/html" charset="utf-8"/>
 	<title>用户管理</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-	<script src="http://cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script>
-	    
-	<link href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet">
-	<script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
-	
-    <link href="http://cdn.bootcss.com/bootstrap-select/2.0.0-beta1/css/bootstrap-select.min.css" rel="stylesheet">
-    <script src="http://cdn.bootcss.com/bootstrap-select/2.0.0-beta1/js/bootstrap-select.min.js"></script>
-
-    <link href="http://cdn.bootcss.com/bootstrap-datetimepicker/4.17.45/css/bootstrap-datetimepicker.css" rel="stylesheet">
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.js"></script>
-    <script src="http://cdn.bootcss.com/bootstrap-datetimepicker/4.17.45/js/bootstrap-datetimepicker.min.js"></script>
-    
+	<script src="js/jquery.min.js"></script>
+	<link href="css/bootstrap.min.css" rel="stylesheet">
+	<script src="js/bootstrap.min.js"></script>
+    <link href="css/bootstrap-select.min.css" rel="stylesheet">
+    <script src="js/bootstrap-select.min.js"></script>
 	
     <script type="text/javascript">
-	   <%if(s!=null&&(s.equals("用户名")||s.equals("用户昵称"))){ %>
+	   <%if(s!=null&&(s.equals("账户")||s.equals("用户名称"))){ %>
 		$(function(){
 			$('#select').selectpicker('val', '<%=s%>');
 		});
@@ -123,7 +116,7 @@ if (c==null) c="";
 									<input id="content" name="content" class="form-control" type="text" placeholder="搜索用户" value="<%=c %>"/>
 									
 									<button class="btn btn-default btn-primary" type="submit">搜索</button>
-									<a class="btn btn-primary" href="newUser.jsp">添加用户 </a>
+									<a class="btn btn-default btn-success" href="newUser.jsp">添加用户 </a>
 								</div>
 							</form>
 					</div>
