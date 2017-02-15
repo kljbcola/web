@@ -191,7 +191,7 @@ if (c==null) c="";
 					              <a class="btn btn-xs btn-info" href="equipInfo.jsp?equip_number=${row.equip_number}">修改</a>
 					              <button class="btn btn-xs btn-danger" onclick="del_equipmessage('${row.equip_number}')">删除</button>
 					      	<%}else { %>	
-					           		<a class="btn btn-xs btn-info" href="#">预约</a>
+					           		<a class="btn btn-xs btn-info" href="equipOrder.jsp?equip_number=${row.equip_number}">预约</a>
 					          
 							<%} %>
 							</td>

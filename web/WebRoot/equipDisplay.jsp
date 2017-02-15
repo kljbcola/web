@@ -11,7 +11,7 @@ request.setCharacterEncoding("UTF-8");
 String path = request.getContextPath();
 String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
 String equipnum=(String)request.getParameter("equip_number");
-String bank="~      ";
+String bank="~~~~~~~";
 if(equipnum==null)
 	response.sendRedirect("index.jsp");
 EquipInfoBean equipinfo=EquipHandler.getEquipInfoBean(equipnum);
@@ -47,14 +47,17 @@ System.out.println(equipinfo.specification);
   			
 		<div class="container">
 			<div class="row clearfix">
-				<div class="col-md-12 column">
+				<div class="col-md-12 col-xs-12">
 					<div class="page-header">
 						<h1>
 							 <%=equipinfo.equip_name %><small>设备编号：<%=equipinfo.equip_number %></small>
 						</h1>
 					</div>
 					<div class="row clearfix">
-						<div class="col-md-8 column">
+						<div class="col-md-4 col-xs-4">
+							<img class="img-rounded" alt="140x140" src="http://ibootstrap-file.b0.upaiyun.com/lorempixel.com/140/140/default.jpg" />
+						</div>
+						<div class="col-md-4 col-xs-4">
 							<dl>
 								<dt>设备型号:</dt>
 								<dd>
@@ -79,10 +82,15 @@ System.out.println(equipinfo.specification);
 								
 							</dl>
 						</div>
-						<div class="col-md-4 column">
-							<img class="img-rounded" alt="140x140" src="http://ibootstrap-file.b0.upaiyun.com/lorempixel.com/140/140/default.jpg" />
+						<div class="col-md-2 col-xs-2">
+								<a class="btn btn-default btn-primary" href="equipOrder.jsp?equipinfo=<%=equipinfo.equip_number %>">预约</a>
 						</div>
+						
 					</div>
+					
+					
+					
+					
 					<div class="tabbable" id="tabs-928077">
 						<ul class="nav nav-tabs">
 							<li class="active">
