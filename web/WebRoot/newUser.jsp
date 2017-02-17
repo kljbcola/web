@@ -46,7 +46,7 @@ if(user==null||!user.userType.equals("管理员")){
 		{
 		  var xmlhttp;
 		  var str=$('#user_account').val().toLowerCase();
-		  if (str.length<4)
+		  if (str.length<=3)
 		  { 
 		    document.getElementById("account_hint").innerHTML="账号*(账号长度不足)";
 		    userflag=false;

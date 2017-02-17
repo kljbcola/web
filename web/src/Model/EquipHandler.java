@@ -41,7 +41,6 @@ public class EquipHandler {
     }
     
     public static EquipInfoBean getEquipInfoBean(String equipnum){
-    	System.out.println(equipnum);
     	EquipInfoBean equipInfoBean=null;
 		con = DbPool.getConnection();
 	        String strSql = "select * from equip_message where equip_number=?;";
@@ -206,5 +205,31 @@ public class EquipHandler {
         if (rs<1) return false;
         else return true;
     }
-
+    public static boolean equipOrder(String userID,String equipID,String date,float start_time,float end_time)
+    {
+    	con = DbPool.getConnection();
+		 int rs;
+	        String strSql = "INSERT INTO order_record "
+	        		+ "(equip_number,user_id,order_date,start_time,end_time) values "+"("
+	        					+ setValue(equipID)
+	        		+ ", " 		+ setValue(userID)
+	        		+ ", "		+ setValue(date)
+	        		+ ", " 		+ start_time
+	        		+ ", " 		+ end_time +");";
+	        try
+	        {
+	            ps = con.prepareStatement(strSql);
+	            System.out.println(strSql);
+	            rs = ps.executeUpdate();
+	        }catch(Exception e)
+	        {
+	            e.printStackTrace();
+	            System.out.println("数据添加出错!");
+	            return false;
+	        }
+	        if(rs<1)
+	        	return false;
+	        else 
+	        	return true;
+    }
 }

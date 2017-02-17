@@ -35,14 +35,30 @@ public class FastQuery extends HttpServlet {
 		String query;
 		query=request.getParameter("account");
 		if(query!=null){
+			System.out.println("account");
 			if(CheckHandler.checkUserAccount(query))
 				writer.print("true");
+			else
+				writer.print("false");
 		}
 		else {
-			query=request.getParameter("equipid");
-			if(query!=null){
-				if(CheckHandler.checkEquipID(query))
-					writer.print("true");
+			query=request.getParameter("order_date");
+			if (query!=null) {
+				String equipid=request.getParameter("equipid");
+				if(equipid!=null){
+					String result=CheckHandler.getOrderMessage(equipid, query);
+					writer.print(result);
+				}
+			}
+			else {
+				query=request.getParameter("equipid");
+				if(query!=null){
+					System.out.println("order_date");
+					if(CheckHandler.checkEquipID(query))
+						writer.print("true");
+					else
+						writer.print("false");
+				}
 			}
 		}
 		

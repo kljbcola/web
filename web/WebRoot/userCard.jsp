@@ -17,7 +17,7 @@ String userID=user.userID;
 <html>
   <head>
     <base href="<%=basePath%>">
-     <meta charset="utf-8"/>
+    <meta charset="utf-8"/>
 	<title>卡内余额</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 	<script src="js/jquery.min.js"></script>

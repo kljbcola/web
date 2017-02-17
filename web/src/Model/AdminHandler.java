@@ -50,19 +50,6 @@ public class AdminHandler {
     	return userBeans;
     }
 
-    public static ArrayList<UserBean> findUserBeans(String keyWord,int keyType){	//未完成
-    	ArrayList<UserBean> userBeans=new ArrayList<UserBean>();
-    	switch (keyType) {
-		case 1:						//用户ID
-			break;
-
-		default:
-			break;
-		}
-    	
-    	return userBeans;
-    }
-
     private static String clearNullString(String str){
     	if(str==null||str.equals("null"))
     		return "";

@@ -87,7 +87,7 @@ if (c==null) c="";
 		
 		function del_equipmessage(num){
 			if(confirm("是否删除该设备？")){
-            	post("equipServelt", {equip_number:num,operation:'del'});
+            	post("EquipServlet", {equip_number:num,operation:'del'});
             	//post("UserProduce", {user_id:userid,operation:'del'});
             }
 		}
@@ -114,7 +114,7 @@ if (c==null) c="";
 							<form class="navbar-form navbar-left" method="get" role="search" action="equipManage.jsp">
 								<div class="form-group">
 									<select id="select" name="select" class="selectpicker show-tick " style="width:120px;">
-									  <option >设备编号</option>
+									  <option>设备编号</option>
 									  <option>设备名称</option>
 									  <option>设备院系</option>
 									</select>

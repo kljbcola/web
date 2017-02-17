@@ -83,7 +83,7 @@ System.out.println(equipinfo.specification);
 							</dl>
 						</div>
 						<div class="col-md-2 col-xs-2">
-								<a class="btn btn-default btn-primary" href="equipOrder.jsp?equipinfo=<%=equipinfo.equip_number %>">预约</a>
+								<a class="btn btn-default btn-primary" href="equipOrder.jsp?equip_number=<%=equipinfo.equip_number %>">预约</a>
 						</div>
 						
 					</div>
