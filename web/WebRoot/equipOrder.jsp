@@ -215,59 +215,106 @@ UserBean userBean=UserBean.checkSession(session);
 </head>
 <body>
 	<jsp:include flush="true" page="head.jsp"></jsp:include>
-
-<div class="col-md-6 col-xs-6 graybg" style="min-width:500px">
-	<div class="col-md-12 col-xs-12" >
-	<div class="col-md-6 col-xs-6">
-		<label>设备名称：<%=equipinfo.lab_name %></label><br>
-		<label>设备型号：<%=equipinfo.equip_model %></label><br>
-		<label>开放时间：<%=equipinfo.open_hours.equals("")?"00:00":equipinfo.open_hours %></label><br>
-		<label>最短预约时间：<%=equipinfo.min_time.equals("")?"-":equipinfo.min_time %></label><br>
-		<label>实验室地址：<%=equipinfo.lab_location %></label>
-	</div>
-	<div class="col-md-5 col-xs-5">
-		<label>设备编号：<%=equipinfo.equip_number %></label><br>
-		<label>设备状态：<%=equipinfo.equip_status %></label><br>
-		<label>关闭时间：<%=equipinfo.close_hours.equals("")?"24:00":equipinfo.close_hours %></label><br>
-		<label>最长预约时间：<%=equipinfo.max_time.equals("")?"-":equipinfo.max_time %></label><br>
-		<label>设备权限：<%=equipinfo.equip_permission%></label>
-	</div>
-	</div>
-	<div class="col-md-12 col-xs-12">
-	<label for="order_date">请选择预约日期</label>
-	</div>
-	<div id="order_date"></div>
-	<div class="col-xs-8 col-md-8">
-		<label>请拖动滑动条选择预约时间</label>
-	</div>
-	<div class="col-xs-8 col-md-8">
-		<label>红色区域为已被预约时间段</label>
-	</div>
-	<div class="col-xs-12 col-md-12 graybg" style="padding:30px 20px 20px 20px;">
-	<div class="col-xs-10 col-md-10">
-	<input id="islider" class="slider" style="width: 100%;" data-slider-id="slider" data-slider-step="0.25" data-slider-min="0" data-slider-max="24" data-slider-value="[0,24]"  data-slider-ticks-snap-bounds="30"/>
-	</div>
-	<div class="col-md-2 col-xs-2"><span id="feedback" class="glyphicon glyphicon-remove form-control-feedback"></span></div>
-	</div>
-	
-	 
-	<div class="col-md-5 col-xs-5">
-	<div class="input-group">            
-		<span class="input-group-addon">开始</span>
-		<input id='start_time' class="form-control" style="min-width: 70px;max-width: 100px" type='text' name="start_time" readonly="readonly" />
-	</div>
-	</div>
-	<div class="col-md-5 col-xs-5">
-	<div class="input-group">            
-		<span class="input-group-addon">结束</span>
-		<input id='end_time' class="form-control" type='text' style="min-width: 70px;max-width: 100px" name="end_time" readonly="readonly" />
-	</div>
-	
-	</div>
-	<% if(equipinfo.equip_status.equals("开放")){ %>
-	<div class="col-md-2 col-xs-2"><button class="btn btn-primary" onclick="orderSubmit()">提交</button></div>
- 	<%}else{ %>
- 	<label>该设备不可预约</label>
- 	<%} %>
-</div>
+	<div class="container">
+			<div class="row clearfix">
+				<div class="col-md-12 col-xs-12">
+					<div class="page-header">
+						<h1>
+							 <%=equipinfo.equip_name %><small>设备编号：<%=equipinfo.equip_number %></small>
+						</h1>
+					</div>
+					<div class="row clearfix">
+						<div class="col-md-4 col-xs-4">
+							<img class="img-rounded" alt="140x140" src="http://ibootstrap-file.b0.upaiyun.com/lorempixel.com/140/140/default.jpg" />
+						</div>
+						<div class="col-md-4 col-xs-4">
+							<dl>
+								<dt>设备型号:</dt>
+								<dd>
+									<%=equipinfo.equip_model %>
+								</dd>
+								<dt>当前状态:</dt>
+								<dd>
+									<%=equipinfo.equip_status %>
+								</dd>
+								<dt>负责人:</dt>
+								<dd>
+									<%=equipinfo.owner %>
+								</dd>
+								<dt>联系电话:</dt>
+								<dd>
+									<%=equipinfo.phone %>
+								</dd>
+								<dt>电子邮件:</dt>
+								<dd>
+									<%=equipinfo.Email %>
+								</dd>
+								
+							</dl>
+						</div>
+					</div>
+					
+					<nav class="navbar navbar-default" role="navigation">
+						<div class="navbar-header">
+							<div class="col-md-6 col-xs-6 " style="min-width:500px">
+							<div class="col-md-12 col-xs-12" >
+							<div class="col-md-6 col-xs-6">
+								<label>设备名称：<%=equipinfo.lab_name %></label><br>
+								<label>设备型号：<%=equipinfo.equip_model %></label><br>
+								<label>开放时间：<%=equipinfo.open_hours.equals("")?"00:00":equipinfo.open_hours %></label><br>
+								<label>最短预约时间：<%=equipinfo.min_time.equals("")?"-":equipinfo.min_time %></label><br>
+								<label>实验室地址：<%=equipinfo.lab_location %></label>
+							</div>
+							<div class="col-md-5 col-xs-5">
+								<label>设备编号：<%=equipinfo.equip_number %></label><br>
+								<label>设备状态：<%=equipinfo.equip_status %></label><br>
+								<label>关闭时间：<%=equipinfo.close_hours.equals("")?"24:00":equipinfo.close_hours %></label><br>
+								<label>最长预约时间：<%=equipinfo.max_time.equals("")?"-":equipinfo.max_time %></label><br>
+								<label>设备权限：<%=equipinfo.equip_permission%></label>
+							</div>
+							</div>
+							<div class="col-md-12 col-xs-12">
+							<label for="order_date">请选择预约日期</label>
+							</div>
+							<div id="order_date"></div>
+							<div class="col-xs-8 col-md-8">
+								<label>请拖动滑动条选择预约时间</label>
+							</div>
+							<div class="col-xs-8 col-md-8">
+								<label>红色区域为已被预约时间段</label>
+							</div>
+							<div class="col-xs-12 col-md-12 " style="padding:30px 20px 20px 20px;">
+							<div class="col-xs-10 col-md-10">
+							<input id="islider" class="slider" style="width: 100%;" data-slider-id="slider" data-slider-step="0.25" data-slider-min="0" data-slider-max="24" data-slider-value="[0,24]"  data-slider-ticks-snap-bounds="30"/>
+							</div>
+							<div class="col-md-2 col-xs-2"><span id="feedback" class="glyphicon glyphicon-remove form-control-feedback"></span></div>
+							</div>
+							
+							 
+							<div class="col-md-5 col-xs-5">
+							<div class="input-group">            
+								<span class="input-group-addon">开始</span>
+								<input id='start_time' class="form-control" style="min-width: 70px;max-width: 100px" type='text' name="start_time" readonly="readonly" />
+							</div>
+							</div>
+							<div class="col-md-5 col-xs-5">
+							<div class="input-group">            
+								<span class="input-group-addon">结束</span>
+								<input id='end_time' class="form-control" type='text' style="min-width: 70px;max-width: 100px" name="end_time" readonly="readonly" />
+							</div>
+							
+							</div>
+							<% if(equipinfo.equip_status.equals("开放")){ %>
+							<div class="col-md-2 col-xs-2"><button class="btn btn-primary" onclick="orderSubmit()">提交</button></div>
+						 	<%}else{ %>
+						 	<label>该设备不可预约</label>
+						 	<%} %>
+						</div>
+					</div>
+				</nav>
+					
+				
+				</div>
+			</div>
+		</div>
 </body>
