@@ -15,7 +15,7 @@
                         
 					<ul class="dropdown-menu">
 						<li><a href="equipManage.jsp">设备查询</a></li>
-						<li><a href="#">预约查询</a></li>
+						<li><a href="OrderManage.jsp">预约查询</a></li>
 						
 						<% if(userBean!=null && userBean.userType.equals("管理员")){ %>
 						<li class="divider"><li>
@@ -43,7 +43,7 @@
 						<li><a>你好：<%= userBean.userType %>:</a></li>
 						<li><a><%= userBean.userName %></a></li>
 						<li>
-							<a href="#">预约记录查询</a>
+							<a href="OrderManage.jsp">预约记录查询</a>
 						</li>
 						<li>
 							<a href="userCard.jsp">卡内余额查询</a>

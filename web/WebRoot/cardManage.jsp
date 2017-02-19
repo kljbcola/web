@@ -29,7 +29,7 @@ if (s==null||c==null||c.equals("")) sql="SELECT * from card_message natural join
 else if (s.equals("账户")){
 	sql="SELECT * from card_message natural join user_message where user_name =\""+c+"\";";
 }else if (s.equals("用户名称")){
-	sql="SELECT * fromcard_message natural join user_message where name=\""+c+"\");";
+	sql="SELECT * from card_message natural join user_message where name=\""+c+"\");";
 }else{
 	sql="SELECT * from card_message natural join user_message order by user_id;";
 }

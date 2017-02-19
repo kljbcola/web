@@ -9,41 +9,18 @@
  import="java.util.*,Bean.UserBean,Model.AdminHandler" 
  pageEncoding="utf-8" errorPage=""%>
 <%
-UserBean userBean=UserBean.checkSession(session);
-if(userBean==null || !userBean.userType.equals("管理员"))
-{
-	AlertHandle.AlertWarning(session, "警告！","非法操作！");
-	response.sendRedirect("index.jsp");
-	return;
-}
 String path = request.getContextPath();
 String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
 
-String k = request.getParameter("select");
-String s=null;
-if(k!=null)
-	s = new String(k.getBytes("iso8859-1"),"utf-8");
-String c = request.getParameter("content");
 String x = request.getParameter("curpage");
 int curpage;
 if (x==null) curpage=1;
 else curpage=Integer.valueOf(x);
-String sql="";
-if (s==null||c==null||c.equals("")) sql="SELECT * from user_message order by user_id;";
-else if (s.equals("账户")){
-	sql="SELECT * from user_message where user_name =\""+c+"\";";
-}else if (s.equals("用户名称")){
-	sql="SELECT * from user_message where name =\""+c+"\";";
-}else{
-	sql="SELECT * from user_message order by user_id;";
-	
-}
-String to ="userManage.jsp?";
-if (s!=null)to+="select="+s+"&";
-if (c!=null) to+="content="+c+"&";
-//System.out.println(sql+"  "+curpage+" ~"+s);
-if (c==null) c="";
+String to ="OrderManage.jsp?";
 
+UserBean user=UserBean.checkSession(session);
+String sql="SELECT * from order_record natural join equip_message where user_id=\""+user.userID+"\";";
+System.out.println(sql);
 %>
 <!doctype html>
 <html>
@@ -60,11 +37,6 @@ if (c==null) c="";
     <script src="js/bootstrap-select.min.js"></script>
 	
     <script type="text/javascript">
-	   <%if(s!=null&&(s.equals("账户")||s.equals("用户名称"))){ %>
-		$(function(){
-			$('#select').selectpicker('val', '<%=s%>');
-		});
-		<%}%>
 	   
 	  function post(URL, PARAMS) {
 	  var temp = document.createElement("form");
@@ -94,6 +66,43 @@ if (c==null) c="";
 			if (curpage>sum) curpage=sum;
 			 window.location.href="<%=to%>"+"curpage="+curpage;
 		}
+		/*function getClassName(abc){
+			if (!document.getElementsByClassName) {
+				var list=document.getElementsByTagName('*');
+				var arr=[];
+				for (var i=0;i<list.length;i++) {
+				if(list[i].className==abc){
+				//在浏览器版本不支持该方法时使用className属性
+				arr.push(list[i]);
+				}
+				}
+				return arr;
+			} else{
+			return document.getElementsByClassName(abc);
+			}
+		}*/
+		$(document).ready(function(){
+				var x,y,a;
+				var s=document.getElementsByClassName("start_time"); 
+				for (var i=0;i<s.length;i++)
+				{ 
+					a=s[i].innerHTML;
+					x=Math.floor(a);
+					a=(a-x)*60;
+					y=Math.round(a);
+				    s[i].innerHTML=x+":"+y;
+				}
+				var e=document.getElementsByClassName("end_time"); 
+				for (var i=0;i<s.length;i++)
+				{ 
+					a=e[i].innerHTML;
+					x=Math.floor(a);
+					a=(a-x)*60;
+					y=Math.round(a);
+				    e[i].innerHTML=x+":"+y;
+				}
+		});
+		
     </script>
 
 </head>
@@ -105,22 +114,6 @@ if (c==null) c="";
 	 <div class="container">
 		<div class="row clearfix">
 			<div class="col-md-12 column">
-				<nav class="navbar navbar-default" role="navigation">
-					<div class="navbar-header">
-							<form class="navbar-form navbar-left" method="get" role="search" action="userManage.jsp">
-								<div class="form-group">
-									<select id="select" name="select" class="selectpicker show-tick " style="width:120px;">
-									  <option>账户</option>
-									  <option>用户名称</option>
-									</select>
-									<input id="content" name="content" class="form-control" type="text" placeholder="搜索用户" value="<%=c %>"/>
-									
-									<button class="btn btn-default btn-primary" type="submit">搜索</button>
-									<a class="btn btn-default btn-success" href="newUser.jsp">添加用户 </a>
-								</div>
-							</form>
-					</div>
-				</nav>
 				
 				<sql:setDataSource var="snapshot" driver="com.mysql.jdbc.Driver"
 				     url="jdbc:mysql://localhost:3306/db?useUnicode=true&characterEncoding=UTF-8&useSSL=false"
@@ -154,10 +147,10 @@ if (c==null) c="";
 			     
 				<table  class="table table-hover">
 						<thead><tr>
-						<th>编号</th>
-						<th>账户</th>
-						<th>用户名称</th>
-						<th>用户类型</th>
+						<th>设备名称</th>
+						<th>预约日期</th>
+						<th>预约开始时间</th>
+						<th>预约结束时间</th>
 			            </tr></thead>
 					<c:forEach var="row" items="${result.rows}">
 					<%
@@ -170,14 +163,10 @@ if (c==null) c="";
 						 	<tr class="success"> <%}else { %>
 							<tr>
 						 <%} %>
-						   <td><c:out value="${row.user_id}"/></td>
-						   <td><c:out value="${row.user_name}"/></td>
-						   <td><c:out value="${row.name}"/></td>
-						   <td><c:out value="${row.user_type}"/></td>
-						   <td>
-					            <a class="btn btn-xs btn-info" href="userInfo.jsp?userID=${row.user_id}">修改</a>
-					            <button class="btn btn-xs btn-danger" onclick="del_usermessage('${row.user_id}')">删除</button>
-							</td>
+						   <td><c:out value="${row.equip_name}"/></td>
+						   <td><c:out value="${row.order_date}"/></td>
+						   <td class="start_time"><c:out value="${row.start_time}"/></td>
+						   <td class="end_time"><c:out value="${row.end_time}"/></td>
 						</tr>
 					<%} %>
 					</c:forEach>
