@@ -1,3 +1,4 @@
+<%@page import="Data.DbPool"%>
 <%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
 <%@ page import="java.io.*,java.util.*,java.sql.*"%>
 <%@ page import="javax.servlet.http.*,javax.servlet.*" %>
@@ -133,8 +134,8 @@ if (c==null) c="";
 				
 				
 				<sql:setDataSource var="snapshot" driver="com.mysql.jdbc.Driver"
-				     url="jdbc:mysql://localhost:3306/db?useUnicode=true&characterEncoding=UTF-8&useSSL=false"
-				     user="datauser"  password="135798"/>
+				     url="<%=DbPool.getConnectionUrl() %>"
+				     user="<%=DbPool.getDBuser() %>"  password="<%=DbPool.getDBpassword() %>"/>
 				     
 				<sql:query dataSource="${snapshot}" var="result">
 					<%=sql%>

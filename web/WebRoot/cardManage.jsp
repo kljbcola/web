@@ -1,3 +1,5 @@
+<%@page import="Model.AlertHandle"%>
+<%@page import="Data.DbPool"%>
 <%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
 <%@ page import="java.io.*,java.util.*,java.sql.*"%>
 <%@ page import="javax.servlet.http.*,javax.servlet.*" %>
@@ -14,6 +16,12 @@ request.setCharacterEncoding("UTF-8");
 String path = request.getContextPath();
 String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
 UserBean userBean=UserBean.checkSession(session);
+if(userBean==null || !userBean.userType.equals("管理员"))
+{
+	AlertHandle.AlertWarning(session, "警告！","非法操作！");
+	response.sendRedirect("index.jsp");
+	return;
+}
 
 String k = request.getParameter("select");
 String s=null;
@@ -25,13 +33,13 @@ int curpage;
 if (x==null) curpage=1;
 else curpage=Integer.valueOf(x);
 String sql="";
-if (s==null||c==null||c.equals("")) sql="SELECT * from card_message natural join user_message order by user_id;";
+if (s==null||c==null||c.equals("")) sql="SELECT * from card_message natural join user_message where status='异常';";
 else if (s.equals("账户")){
-	sql="SELECT * from card_message natural join user_message where user_name =\""+c+"\";";
+	sql="SELECT * from card_message natural join user_message where status='异常' and user_name =\""+c+"\";";
 }else if (s.equals("用户名称")){
-	sql="SELECT * from card_message natural join user_message where name=\""+c+"\");";
+	sql="SELECT * from card_message natural join user_message where status='异常' and name=\""+c+"\";";
 }else{
-	sql="SELECT * from card_message natural join user_message order by user_id;";
+	sql="SELECT * from card_message natural join user_message where status='异常';";
 }
 String to ="cardManage.jsp?";
 if (s!=null)to+="select="+s+"&";
@@ -45,7 +53,7 @@ if (c==null) c="";
   <head>
     <base href="<%=basePath%>">
      <meta charset="UTF-8"/>
-	<title>设备管理</title>
+	<title>挂失管理</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scacardle=no">
 	<script src="js/jquery.min.js"></script>
 	<link href="css/bootstrap.min.css" rel="stylesheet">
@@ -55,14 +63,11 @@ if (c==null) c="";
     <link href="css/bootstrap-datetimepicker.min.css" rel="stylesheet">
     <script src="js/moment-with-locales.min.js"></script>
     <script src="js/bootstrap-datetimepicker.min.js"></script>
-	
-
-
 	<!--
 	<link rel="stylesheet" type="text/css" href="styles.css">
 	-->
 	<script>
-		<%if(s!=null&&(s.equals("设备编号")||s.equals("设备名称")||s.equals("设备院系"))){ %>
+		<%if(s!=null&&(s.equals("账户")||s.equals("用户名称"))){ %>
 		$(function(){
 			$('#select').selectpicker('val', '<%=s%>');
 		});
@@ -86,11 +91,9 @@ if (c==null) c="";
 		}
 		
 		
-		function del_cardmessage(num){
-			if(confirm("是否删除该IC卡？")){
-            	post("CardServlet", {card_number:num,operation:'del'});
+		function send_newcard(num){
+            post("newCard.jsp", {userAccount:num});
             	//post("UserProduce", {user_id:userid,operation:'del'});
-            }
 		}
 		function jump(sum){
 			var curpage=parseInt($("#showPage").val());
@@ -121,7 +124,7 @@ if (c==null) c="";
 									<input id="content" name="content" class="form-control" type="text" placeholder="搜索设备" value="<%=c %>"/>
 									
 									<button class="btn btn-default btn-primary" type="submit">搜索</button>
-									<a class="btn btn-default btn-success" href="newCard.jsp">发卡</a>
+									<a class="btn btn-default btn-success" href="newCard.jsp">挂失</a>
 								</div>
 							</form>
 					</div>
@@ -131,8 +134,8 @@ if (c==null) c="";
 				
 				
 				<sql:setDataSource var="snapshot" driver="com.mysql.jdbc.Driver"
-				     url="jdbc:mysql://localhost:3306/db?useUnicode=true&characterEncoding=UTF-8&useSSL=false"
-				     user="datauser"  password="135798"/>
+				     url="<%=DbPool.getConnectionUrl()%>"
+				     user="<%=DbPool.getDBuser() %>"  password="<%=DbPool.getDBpassword() %>"/>
 				     
 				<sql:query dataSource="${snapshot}" var="result">
 					<%=sql%>
@@ -166,6 +169,7 @@ if (c==null) c="";
 						<th>用户名称</th>
 						<th>剩余金额</th>
 						<th>消费总额</th>
+						<th>IC卡号</th>
 						<th>状态</th>
 			            </tr></thead>
 					<c:forEach var="row" items="${result.rows}">
@@ -182,10 +186,12 @@ if (c==null) c="";
 						   <td><c:out value="${row.name}"/></td>
 						   <td><c:out value="${row.remaining_sum}"/></td>
 						   <td><c:out value="${row.consumption}"/></td>
+						   <td><c:out value="${row.card_number}"/></td>
 						   <td><c:out value="${row.status}"/></td>
 						   <td>
 							   <a class="btn btn-xs btn-primary" href="#">详情</a>
-						       <button class="btn btn-xs btn-danger" onclick="del_cardmessage('${row.card_number}')">删除</button>
+						       <button class="btn btn-xs btn-danger" onclick="send_newcard('${row.user_name}')">补卡</button>
+						       
 							</td>
 						</tr>
 					<%} %>

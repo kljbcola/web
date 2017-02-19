@@ -1,3 +1,5 @@
+<%@page import="Model.CardHandler"%>
+<%@page import="Bean.CardInfoBean"%>
 <%@page import="Bean.UserInfoBean"%>
 <%@page import="Model.AlertHandle"%>
 <%@ page language="java" 
@@ -6,19 +8,26 @@ pageEncoding="UTF-8"%>
 <%
 String path = request.getContextPath();
 String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
-	
+
+String userAccount=request.getParameter("userAccount");
 UserBean user=UserBean.checkSession(session);
-if(user==null||!user.userType.equals("管理员")){
+UserBean theUser;
+CardInfoBean card=CardHandler.getCardByUser(userAccount);
+if(user==null||!user.userType.equals("管理员")||
+	userAccount==null||
+	(theUser=AdminHandler.getUserBean(userAccount))==null){
 	AlertHandle.AlertWarning(session, "警告！","非法操作！");
 	response.sendRedirect("index.jsp");
+	return ;
 }
+
 %>
 <!DOCTYPE html>
 <html>
 
 <head>
     <meta charset="UTF-8">
-    <title>IC卡详情</title>
+    <title>挂失补卡</title>
 	<script src="js/jquery.min.js"></script>
 	<link href="css/bootstrap.min.css" rel="stylesheet">
 	<script src="js/bootstrap.min.js"></script>
@@ -41,6 +50,36 @@ if(user==null||!user.userType.equals("管理员")){
                 window.location.reload(true);
             }
         }
+        var cardflag=false;
+         function checkCard(){
+        	var xmlhttp;
+			var str=$('#user_card_number').val();
+			if(str.length==0){cardflag=true;return;}
+			if (window.XMLHttpRequest) {
+		    // IE7+, Firefox, Chrome, Opera, Safari 浏览器执行代码
+				xmlhttp=new XMLHttpRequest();
+			}
+		  	else {
+				// IE6, IE5 浏览器执行代码
+				xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+		  	}
+		  	xmlhttp.onreadystatechange=function()
+		  	{
+		    	if (xmlhttp.readyState==4 && xmlhttp.status==200)
+		    	{
+			    	if(xmlhttp.responseText=="true"){
+			    		cardflag=false;
+			    		document.getElementById("card_hint").innerHTML="IC卡号(当前卡号已被占用 ！)";
+			    	}
+			    	else{
+			    		cardflag=true;
+			    		document.getElementById("card_hint").innerHTML="IC卡号(当前卡号可用！)";
+			    	}
+		    	}
+		  	}
+		  	xmlhttp.open("GET","FastQuery?card_number="+str,true);
+		  	xmlhttp.send();
+        }
         function save(){
             if(document.getElementById("card_number").value.length==0)
             {
@@ -52,17 +91,16 @@ if(user==null||!user.userType.equals("管理员")){
                 alert('卡主ID不能为空');
                 return false;
             }
-			if(document.getElementById("remaining_sum").value.length==0)
+            if(document.getElementById("user_account").value.length==0)
             {
-                alert('剩余金额不能为空');
+                alert('卡主账号不能为空');
                 return false;
             }
-			if(document.getElementById("consumption").value.length==0)
+            if(!cardflag)
             {
-                alert('消费总额不能为空');
-                return false;
+            	alert('卡号无效!');
+            	return false;
             }
-            
             if(confirm("确认提交吗？")){
 		        var temp = document.getElementById("card_info");
 		        temp.submit();
@@ -77,20 +115,24 @@ if(user==null||!user.userType.equals("管理员")){
     <div class="container">
         <form id="card_info" class="form-horizontal" action="CardServlet" method="post" role="form">
 			<input id="operation" name="operation" value="add" type="hidden">
-
-            <label for="card_number">卡号</label>
+			
+			<label for="card_number" id="card_hint">新卡号</label>
             <input class="form-control" id="card_number" name="card_number" type="text"/>
+
+			<label for="user_id">卡主ID</label>
+            <input class="form-control" id="user_id" name="user_id" type="text" value="<%=theUser.userID %>" readonly="readonly"/>
             
-            <label for="user_id">卡主ID</label>
-            <input class="form-control" id="user_id" name="user_id" type="text"/>
+            <label for="user_account">卡主账号</label>
+            <input class="form-control" id="user_account" name="user_account" type="text" readonly="readonly" value="<%=theUser.userAccount %>"/>
+            
+			<label for="user_name">卡主名称</label>
+            <input class="form-control" id="user_name" type="text" readonly="readonly" value="<%=theUser.userName %>"/>
             
             <label for="remaining_sum">剩余金额</label>
-            <input class="form-control" id="remaining_sum" name="remaining_sum" type="text"/>
+            <input class="form-control" id="remaining_sum" type="text" readonly="readonly" value="<%=card.remaining_sum %>"/>
             
             <label for="consumption">消费总额</label>
-            <input class="form-control" id="consumption" name="consumption" type="text"/>
-
-           	<input id="status" name="status" value="正常" type="hidden">
+            <input class="form-control" id="consumption" type="text" readonly="readonly" value="<%=card.consumption %>"/>
    
             </form>
             <button class="btn btn-block btn-primary" onclick="save()">提交</button>

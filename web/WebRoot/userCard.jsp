@@ -1,3 +1,5 @@
+<%@page import="Model.AlertHandle"%>
+<%@page import="Data.DbPool"%>
 <%@ page import="java.io.*,java.util.*,java.sql.*"%>
 <%@ page import="javax.servlet.http.*,javax.servlet.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
@@ -10,7 +12,11 @@ pageEncoding="UTF-8"%>
 String path = request.getContextPath();
 String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
 UserBean user=UserBean.checkSession(session);
-String userID=user.userID;
+if(user==null){
+	AlertHandle.AlertWarning(session, "警告！","非法操作！");
+	response.sendRedirect("index.jsp");
+	return ;
+}
 %>
 
 <!DOCTYPE HTML>
@@ -28,7 +34,35 @@ String userID=user.userID;
 	<!--
 	<link rel="stylesheet" type="text/css" href="styles.css">
 	-->
-
+		<script>
+		function post(URL, PARAMS) {
+		  var temp = document.createElement("form");
+		  temp.action = URL;
+		  temp.method = "post";
+		  temp.style.display = "none";
+		  for (var x in PARAMS) {
+		    var opt = document.createElement("textarea");
+		    opt.name = x;
+		    opt.value = PARAMS[x];
+		    // alert(opt.name)
+		    temp.appendChild(opt);
+		  }
+		  document.body.appendChild(temp);
+		  temp.submit();
+		  return temp;
+		}
+		
+		function cardW(num){
+			if(confirm("是否挂失？")){
+	           	post("CardServlet", {card_number:num,operation:'cardW'});
+	           }
+		}
+		function cardR(num){
+			if(confirm("是否解除挂失？")){
+	           	post("CardServlet", {card_number:num,operation:'cardR'});
+	           }
+		}
+	</script>
   </head>
   
   <body>
@@ -36,12 +70,12 @@ String userID=user.userID;
   	<jsp:include flush="true" page="head.jsp"></jsp:include>
   	
   	<sql:setDataSource var="snapshot" driver="com.mysql.jdbc.Driver"
-     url="jdbc:mysql://localhost:3306/db?useUnicode=true&characterEncoding=UTF-8&useSSL=false"
-     user="datauser"  password="135798"/>
+		url="<%=DbPool.getConnectionUrl() %>"
+		user="<%=DbPool.getDBuser() %>"  password="<%=DbPool.getDBpassword() %>"/>
      
      
   	<sql:query dataSource="${snapshot}" var="result">
-		SELECT * from card_message where user_id="<%=userID%>";
+		 select *from card_message where card_number=(select card_number from user_message s2 where user_id="<%=user.userID %>");
 	</sql:query>
 	
 	<table class="table">
@@ -57,6 +91,12 @@ String userID=user.userID;
 		   <td><c:out value="${row.remaining_sum}"/></td>
 		   <td><c:out value="${row.consumption}"/></td>
 		   <td><c:out value="${row.status}"/></td>
+		   <td><c:if test="${row.status=='正常'}">
+		   		 <button class="btn btn-xs btn-danger" onclick="cardW('${row.card_number}')">挂失</button>
+		   </c:if>
+		   <c:if test="${row.status=='异常'}">
+		   		 <button class="btn btn-xs btn-danger" onclick="cardR('${row.card_number} %>')">解挂</button>
+		   </c:if></td>
 		</tr>
 		</c:forEach>
 	</table>

@@ -66,6 +66,10 @@ public class UserProduce extends HttpServlet {
 						AlertHandle.AlertSuccess(session, "成功", "添加用户成功!");
 					else
 						AlertHandle.AlertWarning(session, "失败", "添加用户失败!");
+					if(user.userType.equals("管理员")){
+						response.sendRedirect("userManage.jsp");
+						return;
+					}
 				}
 				break;
 			case "modify":
@@ -76,12 +80,15 @@ public class UserProduce extends HttpServlet {
 					UserInfoBean userInfoBean=getUserByParameter(request);
 					if(AdminHandler.setUserInfo(userInfoBean)){
 						AlertHandle.AlertSuccess(session, "成功", "修改成功!");
-						UserBean userBean=new UserBean(userInfoBean.userID, userInfoBean.userName,user.userType);
+						UserBean userBean=new UserBean(userInfoBean.userID, userInfoBean.userName,user.userAccount,user.userType);
 						userBean.SetSession(session);
 					}
 					else 
 						AlertHandle.AlertWarning(session, "失败", "修改失败!");
-					
+					if(user.userType.equals("管理员")){
+						response.sendRedirect("userManage.jsp");
+						return;
+					}
 				}
 				break;
 			case "del":
@@ -93,13 +100,14 @@ public class UserProduce extends HttpServlet {
 					else 
 						AlertHandle.AlertWarning(session, "失败", "删除用户失败!");
 				}
-				break;
+				response.sendRedirect("userManage.jsp");
+				return ;
 			default:
 				AlertHandle.AlertWarning(session, "失败", "未知操作!");
 				break;
 			}
-		} 
-		response.sendRedirect("userManage.jsp");
+		}
+		response.sendRedirect("index.jsp");
 	}
 
 }

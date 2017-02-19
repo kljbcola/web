@@ -1,4 +1,5 @@
 
+<%@page import="Data.DbPool"%>
 <%@ page import="java.io.*,java.util.*,java.sql.*"%>
 <%@ page import="javax.servlet.http.*,javax.servlet.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
@@ -19,6 +20,12 @@ else curpage=Integer.valueOf(x);
 String to ="OrderManage.jsp?";
 
 UserBean user=UserBean.checkSession(session);
+if(user==null){
+	session=request.getSession(true);
+	AlertHandle.AlertWarning(session, "警告！", "您尚未登录！");
+	response.sendRedirect("index.jsp");
+	return ;
+}
 String sql="SELECT * from order_record natural join equip_message where user_id=\""+user.userID+"\";";
 System.out.println(sql);
 %>
@@ -81,6 +88,10 @@ System.out.println(sql);
 			return document.getElementsByClassName(abc);
 			}
 		}*/
+		function formatNum(a){
+			var b="0"+a;
+			return b[b.length-2]+b[b.length-1];
+		}
 		$(document).ready(function(){
 				var x,y,a;
 				var s=document.getElementsByClassName("start_time"); 
@@ -90,7 +101,7 @@ System.out.println(sql);
 					x=Math.floor(a);
 					a=(a-x)*60;
 					y=Math.round(a);
-				    s[i].innerHTML=x+":"+y;
+				    s[i].innerHTML=formatNum(x)+":"+formatNum(y);
 				}
 				var e=document.getElementsByClassName("end_time"); 
 				for (var i=0;i<s.length;i++)
@@ -99,7 +110,7 @@ System.out.println(sql);
 					x=Math.floor(a);
 					a=(a-x)*60;
 					y=Math.round(a);
-				    e[i].innerHTML=x+":"+y;
+				    e[i].innerHTML=formatNum(x)+":"+formatNum(y);
 				}
 		});
 		
@@ -116,8 +127,8 @@ System.out.println(sql);
 			<div class="col-md-12 column">
 				
 				<sql:setDataSource var="snapshot" driver="com.mysql.jdbc.Driver"
-				     url="jdbc:mysql://localhost:3306/db?useUnicode=true&characterEncoding=UTF-8&useSSL=false"
-				     user="datauser"  password="135798"/>
+				     url="<%=DbPool.getConnectionUrl() %>"
+				     user="<%=DbPool.getDBuser() %>"  password="<%=DbPool.getDBpassword() %>"/>
 				     
 				<sql:query dataSource="${snapshot}" var="result">
 					<%=sql%>

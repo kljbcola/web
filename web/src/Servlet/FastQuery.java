@@ -59,6 +59,13 @@ public class FastQuery extends HttpServlet {
 					else
 						writer.print("false");
 				}
+				else{
+					query=request.getParameter("card_number");
+					if(CheckHandler.checkCardNumber(query))
+						writer.print("true");
+					else
+						writer.print("false");
+				}
 			}
 		}
 		

@@ -42,6 +42,7 @@ if(user==null||!user.userType.equals("管理员")){
             }
         }
         var userflag=false;
+        var cardflag=true;
         function showHint()
 		{
 		  var xmlhttp;
@@ -77,7 +78,35 @@ if(user==null||!user.userType.equals("管理员")){
 		  xmlhttp.open("GET","FastQuery?account="+str,true);
 		  xmlhttp.send();
 		}
-        
+        function checkCard(){
+        	var xmlhttp;
+			var str=$('#user_card_number').val();
+			if(str.length==0){cardflag=true;return;}
+			if (window.XMLHttpRequest) {
+		    // IE7+, Firefox, Chrome, Opera, Safari 浏览器执行代码
+				xmlhttp=new XMLHttpRequest();
+			}
+		  	else {
+				// IE6, IE5 浏览器执行代码
+				xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+		  	}
+		  	xmlhttp.onreadystatechange=function()
+		  	{
+		    	if (xmlhttp.readyState==4 && xmlhttp.status==200)
+		    	{
+			    	if(xmlhttp.responseText=="true"){
+			    		cardflag=false;
+			    		document.getElementById("card_hint").innerHTML="IC卡号(当前卡号已被占用 ！)";
+			    	}
+			    	else{
+			    		cardflag=true;
+			    		document.getElementById("card_hint").innerHTML="IC卡号(当前卡号可用！)";
+			    	}
+		    	}
+		  	}
+		  	xmlhttp.open("GET","FastQuery?card_number="+str,true);
+		  	xmlhttp.send();
+        }
         
         function save(){
         	if(!userflag)
@@ -120,7 +149,10 @@ if(user==null||!user.userType.equals("管理员")){
                 alert('请选择用户类型');
                 return false;
             }
-            
+            if(!cardflag){
+            	alert("卡号已被注册");
+                return false;
+            }
             if(document.getElementById("user_ID_number").value.length!=0 &&
             document.getElementById("ID_type").value=="身份证" && 
             document.getElementById("user_ID_number").value.length!=18)
@@ -168,8 +200,8 @@ if(user==null||!user.userType.equals("管理员")){
                 <option>管理员</option>
             </select>
             
-            <label for="user_card_number">IC卡号</label>
-            <input class="form-control" id="user_card_number" name="user_card_number" type="text"/>
+            <label for="user_card_number" id="card_hint">IC卡号</label>
+            <input class="form-control" id="user_card_number" name="user_card_number" onchange="checkCard()" type="text"/>
             
 
             <label for="ID_type">证件类型</label>

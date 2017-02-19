@@ -126,6 +126,36 @@ public class CheckHandler {
             return false;
         }
     }
-
+    public static boolean checkCardNumber(String CardNumber)
+    {
+        //从数据访问组件中取得连接
+        con = DbPool.getConnection();
+        //得到Controller传入的用户输入的用户名及密码
+        String strSql = "select user_name from card_message where card_number=?";
+        try
+        {
+            ps = con.prepareStatement(strSql);
+            ps.setString(1,CardNumber);
+            rs = ps.executeQuery();
+            if(rs.next())
+            {    
+                //释放资源
+                DbPool.DBClose(con, ps, rs);      
+            	return true;
+            }
+            else
+            {
+                //释放资源
+                DbPool.DBClose(con, ps, rs);
+                return false;
+            }            
+        }catch(Exception e)
+        {
+            e.printStackTrace();
+            System.out.println("查询出错!");
+            return false;
+        }
+        
+    }
 
 }

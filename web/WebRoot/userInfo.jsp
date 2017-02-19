@@ -102,10 +102,6 @@ if(userinfo==null){
                 <option>男</option>
                 <option>女</option>
             </select>
-            
-            <label for="user_card_number">IC卡号</label>
-            <input class="form-control" id="user_card_number" name="user_card_number" type="text" value="<%=userinfo.userIC_Number %>"/>
-            
 
             <label for="ID_type">证件类型</label>
             <select id="ID_type" name="ID_type" class="selectpicker show-tick form-control">

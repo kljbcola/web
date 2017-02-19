@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 
+import Bean.CardInfoBean;
 import Bean.UserBean;
 import Bean.UserInfoBean;
 import Data.DbPool;
@@ -19,6 +20,35 @@ public class AdminHandler {
     		return false;
     	return true;
     }
+    public static UserBean getUserBean(String userAccount) {
+    	con = DbPool.getConnection();
+    	String strSql = "select user_id,user_name,name,user_type from user_message where user_name=?;";
+    	UserBean userBean=null;
+    	try
+         {
+         	
+             ps = con.prepareStatement(strSql);
+             ps.setString(1, userAccount);
+             rs = ps.executeQuery();
+             if(rs.next())
+             {    
+             	userBean=new UserBean();
+             	userBean.userID=""+rs.getLong(1);
+             	userBean.userAccount=rs.getString(2);
+             	userBean.userName=rs.getString(3);
+             	userBean.userType=rs.getString(4);
+             }
+             //释放资源
+             DbPool.DBClose(con, ps, rs);
+         }catch(Exception e)
+         {
+             e.printStackTrace();
+             System.out.println("checkLogin出错!");
+             return null;
+         }
+     	return userBean;
+    }
+    
     public static ArrayList<UserBean> getUserBeans(){
     	ArrayList<UserBean> userBeans=new ArrayList<UserBean>();
     	
@@ -38,7 +68,6 @@ public class AdminHandler {
             	userBean.userName=rs.getString(3);
             	userBean.userType=rs.getString(4);
             	userBeans.add(userBean);
-                //释放资源
             }
             //释放资源
             DbPool.DBClose(con, ps, rs);
@@ -102,13 +131,37 @@ public class AdminHandler {
 			return "\'"+val+"\'";
 		return "null";
 	}
+	public static boolean setUserCard(String userID,String userIC_Number) {
+		con = DbPool.getConnection();
+		int rs;
+	    String strSql = "update user_message set "
+	        		+ " card_number="	+ setValue(userIC_Number)
+	        		+ " where user_id=" + setValue(userID)
+	        		+ ";";
+	    try
+        {
+            ps = con.prepareStatement(strSql);
+            System.out.println(strSql);
+            rs = ps.executeUpdate();
+            //释放资源
+            DbPool.DBClose(con, ps);
+        }catch(Exception e)
+        {
+            e.printStackTrace();
+            System.out.println("数据修改出错!");
+            return false;
+        }
+	    if(rs<1)
+        	return false;
+        else 
+        	return true;
+	}
 	public static boolean setUserInfo(UserInfoBean userInfoBean)
 	{
 		 con = DbPool.getConnection();
 		 int rs;
-	        String strSql = "update user_message set "
-	        		+ "  card_number="	+ setValue(userInfoBean.userIC_Number)
-	        		+ ", name=" 		+ setValue(userInfoBean.userName)
+	        String strSql = "update user_message set"
+	        		+ "  name=" 		+ setValue(userInfoBean.userName)
 	        		+ ", sex=" 			+ setValue(userInfoBean.userSex)
 	        		+ ", ID_type=" 		+ setValue(userInfoBean.userID_Type)
 	        		+ ", ID_number=" 	+ setValue(userInfoBean.userID_Number)
@@ -123,6 +176,8 @@ public class AdminHandler {
 	            ps = con.prepareStatement(strSql);
 	            System.out.println(strSql);
 	            rs = ps.executeUpdate();
+	            //释放资源
+	            DbPool.DBClose(con, ps);
 	        }catch(Exception e)
 	        {
 	            e.printStackTrace();
@@ -136,9 +191,18 @@ public class AdminHandler {
 	}
 	public static boolean addUser(UserInfoBean userInfoBean)
 	{
+		if(userInfoBean.userIC_Number!=null&&!userInfoBean.userIC_Number.equals("")){
+			CardInfoBean card=new CardInfoBean();
+			card.card_number=userInfoBean.userIC_Number;
+			card.user_account=userInfoBean.userAccount;
+			card.remaining_sum="0";
+			card.consumption="0";
+			card.status="正常";
+			CardHandler.addCard(card);
+		}
 		 con = DbPool.getConnection();
 		 int rs;
-	        String strSql = "INSERT INTO user_message "
+	     String strSql = "INSERT INTO user_message "
 	        		+ "(user_name,password,user_type,card_number,name,sex,ID_type,"
 	        		+ "ID_number,telephone,address,birthdate,remark) values "+"("
 	        		+  setValue(userInfoBean.userAccount)
@@ -153,11 +217,14 @@ public class AdminHandler {
 	        		+ ", " 		+ setValue(userInfoBean.userAddress)
 	        		+ ", " 		+ setValue(userInfoBean.userBirthDate)
 	        		+ ",  " 	+ setValue(userInfoBean.userRemark) +");";
+	        
 	        try
 	        {
 	            ps = con.prepareStatement(strSql);
 	            System.out.println(strSql);
 	            rs = ps.executeUpdate();
+	            //释放资源
+	            DbPool.DBClose(con, ps);
 	        }catch(Exception e)
 	        {
 	            e.printStackTrace();
@@ -179,6 +246,8 @@ public class AdminHandler {
 	            ps = con.prepareStatement(strSql);
 	            System.out.println(strSql);
 	            rs = ps.executeUpdate();
+	            //释放资源
+	            DbPool.DBClose(con, ps);
 	        }catch(Exception e)
 	        {
 	            e.printStackTrace();

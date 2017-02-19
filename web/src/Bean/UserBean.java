@@ -8,11 +8,6 @@ public class UserBean {
 	public String userType=null;
 	public String userAccount=null;
 	public UserBean(){}
-	public UserBean(String id,String name,String type){
-		userID=id;
-		userName=name;
-		userType=type;
-	}
 	public UserBean(String id,String name,String account,String type){
 		userID=id;
 		userName=name;
@@ -24,6 +19,7 @@ public class UserBean {
 		session.setAttribute("userID",userID);
 		session.setAttribute("userName",userName);
 		session.setAttribute("userType",userType);
+		session.setAttribute("userAccount",userAccount);
 	}
 	public static UserBean checkSession(HttpSession session)
 	{
@@ -38,7 +34,10 @@ public class UserBean {
 		String type=(String)session.getAttribute("userType");
 		if(type==null)
 			return userBean;
-		userBean=new UserBean(id,name,type);
+		String account=(String)session.getAttribute("userAccount");
+		if(account==null)
+			return userBean;
+		userBean=new UserBean(id,name,account,type);
 		return userBean;
 	}
 }
