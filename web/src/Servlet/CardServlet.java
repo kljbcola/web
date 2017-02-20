@@ -12,6 +12,7 @@ import javax.servlet.http.HttpSession;
 
 
 import Bean.CardInfoBean;
+import Bean.PaidInfoBean;
 import Bean.UserBean;
 import Model.AlertHandle;
 import Model.CardHandler;
@@ -36,8 +37,17 @@ public class CardServlet extends HttpServlet {
 		cardInfoBean.remaining_sum			=request.getParameter("remaining_sum");
 		cardInfoBean.consumption			=request.getParameter("consumption");
 		cardInfoBean.status					=request.getParameter("status");
-		
 		return cardInfoBean;
+	}
+	PaidInfoBean getpaidByParameter(HttpServletRequest request)	{
+		PaidInfoBean paidInfoBean=new PaidInfoBean();
+		paidInfoBean.card_number			=request.getParameter("card_number");
+		paidInfoBean.order_record_id			=request.getParameter("order_record_id");
+		paidInfoBean.paid_amount			=request.getParameter("paid_amount");
+		paidInfoBean.paid_reason			=request.getParameter("paid_reason");
+		paidInfoBean.paid_time					=request.getParameter("paid_time");
+		
+		return paidInfoBean;
 	}
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.setCharacterEncoding("UTF-8");
@@ -90,6 +100,19 @@ public class CardServlet extends HttpServlet {
 						AlertHandle.AlertWarning(session, "失败", "修改IC卡失败!");
 				}
 				break;
+			case "paid":
+				if(!user.userType.equals("管理员"))
+					AlertHandle.AlertWarning(session, "警告", "权限不足!");
+				else{
+					PaidInfoBean paidInfoBean=getpaidByParameter(request);
+					if(CardHandler.addPaidInfo(paidInfoBean)){
+						System.out.printf("paid");
+						AlertHandle.AlertSuccess(session, "成功", "充值IC卡成功!");
+					}else 
+						AlertHandle.AlertWarning(session, "失败", "充值IC卡失败!");
+				}
+				response.sendRedirect("index.jsp");
+				return;
 			case "del":
 				if(!user.userType.equals("管理员"))
 					AlertHandle.AlertWarning(session, "警告", "权限不足!");

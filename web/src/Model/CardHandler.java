@@ -4,6 +4,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
 import Bean.CardInfoBean;
+import Bean.PaidInfoBean;
 import Data.DbPool;
 public class CardHandler {
     static Connection con;
@@ -188,6 +189,83 @@ public class CardHandler {
 	        else 
 	        	return true;
     }
+    public static boolean addCardM(PaidInfoBean paidInfoBean){
+    	System.out.println("添加IC卡余额中~~");
+    	
+		 	int res;
+		 	String s="";
+	        String Sql = "SELECT remaining_sum FROM card_message where card_number="+setValue(paidInfoBean.card_number)+";";
+	  
+	        try
+	        {	
+	        	con = DbPool.getConnection();
+	            ps = con.prepareStatement(Sql);
+	            System.out.println(Sql);
+	            rs = ps.executeQuery();
+	            if(rs.next())
+	            {    
+		            s=clearNullString(rs.getString("remaining_sum"));
+		            System.out.println(s+" "+paidInfoBean.paid_amount);
+		            res=Integer.parseInt(s)+Integer.parseInt(paidInfoBean.paid_amount);
+		            s=String.valueOf(res);
+		            DbPool.DBClose(con, ps, rs);    
+	            }else  DbPool.DBClose(con, ps, rs);  
+	        }catch(Exception e)
+	        {
+	            e.printStackTrace();
+	            System.out.println("计算余额出错!");
+	            return false;
+	        }
+		 	String strSql = "update card_message set remaining_sum = "+setValue(s)
+		 					+" where card_number="+setValue(paidInfoBean.card_number);
+	        int cs;
+	        try
+	        {
+	        	con = DbPool.getConnection();
+	            ps = con.prepareStatement(strSql);
+	            System.out.println(strSql);
+	            cs = ps.executeUpdate();
+	            DbPool.DBClose(con, ps);   
+	        }catch(Exception e)
+	        {
+	            e.printStackTrace();
+	            System.out.println("更新余额出错!");
+	            return false;
+	        }
+	        if (cs<1) return false;
+	        return true;
+    }
+    public static boolean addPaidInfo(PaidInfoBean paidInfoBean){
+    	System.out.println("添加支付信息中~~");
+    	if (!addCardM(paidInfoBean)) return false;//添加卡内余额
+    	con = DbPool.getConnection();        
+		 int rs;
+	        String strSql = "INSERT INTO paid_record "    
+	        		+ "(card_number,	order_record_id,		paid_amount,		paid_reason,		paid_time)  values "+"("
+	        		+  			  setValue(paidInfoBean.card_number)
+	        		+ ", "   	+ setValue(paidInfoBean.order_record_id) 
+	        		+ ", " 		+ setValue(paidInfoBean.paid_amount)
+	        		+ ", " 		+ setValue(paidInfoBean.paid_reason)
+	        		+ ", " 		+ setValue(paidInfoBean.paid_time) +");"; //添加充值信息
+	        System.out.println(strSql);
+	        try
+	        {
+	            ps = con.prepareStatement(strSql);
+	            System.out.println(strSql);
+	            rs = ps.executeUpdate();
+	        }catch(Exception e)
+	        {
+	            e.printStackTrace();
+	            System.out.println("插入充值记录出错!");
+	            return false;
+	        }
+	        DbPool.DBClose(con, ps);   
+	        if(rs<1)
+	        	return false;
+	        else 
+	        	return true;
+    }
+    
     
     public static boolean delCard(String num)
     {
@@ -232,11 +310,14 @@ public class CardHandler {
     public static boolean cardR(String num){//解除挂失
     	con = DbPool.getConnection();
         String strSql = "update card_message set status=\"正常\" where card_number=?;";
+        System.out.println(strSql+num);
+        
         int rs;
         try
         {
             ps = con.prepareStatement(strSql);
             ps.setString(1,num);
+            
             rs = ps.executeUpdate();
        
         }catch(Exception e)

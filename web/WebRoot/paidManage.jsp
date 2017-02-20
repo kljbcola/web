@@ -2,6 +2,8 @@
 <%@page import="Bean.CardInfoBean"%>
 <%@page import="Bean.UserInfoBean"%>
 <%@page import="Model.AlertHandle"%>
+<%@ page import="java.io.*,java.util.*" %>
+<%@ page import="javax.servlet.*,java.text.*" %>
 <%@ page language="java" 
 import="java.util.*,Bean.UserBean,Model.AdminHandler" 
 pageEncoding="UTF-8"%>
@@ -11,11 +13,8 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 
 String userAccount=request.getParameter("userAccount");
 UserBean user=UserBean.checkSession(session);
-UserBean theUser;
-CardInfoBean card=CardHandler.getCardByUser(userAccount);
-if(user==null||!user.userType.equals("管理员")||
-	userAccount==null||
-	(theUser=AdminHandler.getUserBean(userAccount))==null){
+//CardInfoBean card=CardHandler.getCardByUser(userAccount);
+if(user==null||!user.userType.equals("管理员")){
 	AlertHandle.AlertWarning(session, "警告！","非法操作！");
 	response.sendRedirect("index.jsp");
 	return ;
@@ -27,7 +26,7 @@ if(user==null||!user.userType.equals("管理员")||
 
 <head>
     <meta charset="UTF-8">
-    <title>挂失补卡</title>
+    <title>IC卡充值</title>
 	<script src="js/jquery.min.js"></script>
 	<link href="css/bootstrap.min.css" rel="stylesheet">
 	<script src="js/bootstrap.min.js"></script>
@@ -50,8 +49,9 @@ if(user==null||!user.userType.equals("管理员")||
                 window.location.reload(true);
             }
         }
+        
         var cardflag=false;
-         function checkCard(){
+        function checkCard(){
         	var xmlhttp;
 			var str=$('#card_number').val();
 			if(str.length==0){cardflag=false;return;}
@@ -68,12 +68,12 @@ if(user==null||!user.userType.equals("管理员")||
 		    	if (xmlhttp.readyState==4 && xmlhttp.status==200)
 		    	{
 			    	if(xmlhttp.responseText=="true"){
-			    		cardflag=false;
-			    		document.getElementById("card_hint").innerHTML="IC卡号(当前卡号已被占用 ！)";
+			    		cardflag=true;
+			    		document.getElementById("card_hint").innerHTML="IC卡号(存在当前用户！)";
 			    	}
 			    	else{
-			    		cardflag=true;
-			    		document.getElementById("card_hint").innerHTML="IC卡号(当前卡号可用！)";
+			    		cardflag=false;
+			    		document.getElementById("card_hint").innerHTML="IC卡号(不存在当前用户！)";
 			    	}
 		    	}
 		  	}
@@ -86,14 +86,9 @@ if(user==null||!user.userType.equals("管理员")||
                 alert('卡号不能为空');
                 return false;
             }
-            if(document.getElementById("user_id").value.length==0)
+            if(document.getElementById("card_number").value.length==0)
             {
-                alert('卡主ID不能为空');
-                return false;
-            }
-            if(document.getElementById("user_account").value.length==0)
-            {
-                alert('卡主账号不能为空');
+                alert('卡号不能为空');
                 return false;
             }
             if(!cardflag)
@@ -114,25 +109,23 @@ if(user==null||!user.userType.equals("管理员")||
 	<jsp:include flush="true" page="head.jsp"></jsp:include>
     <div class="container">
         <form id="card_info" class="form-horizontal" action="CardServlet" method="post" role="form">
-			<input id="operation" name="operation" value="add" type="hidden">
+			<input id="operation" name="operation" value="paid" type="hidden">
 			
-			<label for="card_number" id="card_hint">新卡号</label>
+            <input class="form-control" id="order_record_id" name="order_record_id" type="hidden" value="0"/>
+			
+			<label for="card_number" id="card_hint">卡号</label>
             <input class="form-control" id="card_number" onchange="checkCard()" name="card_number" type="text"/>
 
-			<label for="user_id">卡主ID</label>
-            <input class="form-control" id="user_id" name="user_id" type="text" value="<%=theUser.userID %>" readonly="readonly"/>
+            <label for="paid_amount">充值总额</label>
+            <input class="form-control" id="paid_amount" name="paid_amount" type="text"/>
             
-            <label for="user_account">卡主账号</label>
-            <input class="form-control" id="user_account" name="user_account" type="text" readonly="readonly" value="<%=theUser.userAccount %>"/>
+            <input class="form-control" id="paid_reason" name="paid_reason" type="hidden" value="充值"/>
             
-			<label for="user_name">卡主名称</label>
-            <input class="form-control" id="user_name" type="text" readonly="readonly" value="<%=theUser.userName %>"/>
-            
-            <label for="remaining_sum">剩余金额</label>
-            <input class="form-control" id="remaining_sum" type="text" readonly="readonly" value="<%=card.remaining_sum %>"/>
-            
-            <label for="consumption">消费总额</label>
-            <input class="form-control" id="consumption" type="text" readonly="readonly" value="<%=card.consumption %>"/>
+            <%   Date dNow = new Date( );
+				   SimpleDateFormat ft = 
+				   new SimpleDateFormat ("yyyy-MM-dd HH:mm:ss");
+		    %>
+			<input class="form-control" id="paid_time" name="paid_time" type="hidden" value="<%=ft.format(dNow) %>"/>
    
             </form>
             <button class="btn btn-block btn-primary" onclick="save()">提交</button>
