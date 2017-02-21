@@ -17,6 +17,11 @@ if(user==null){
 	response.sendRedirect("index.jsp");
 	return ;
 }
+String x = request.getParameter("curpage");
+int curpage;
+if (x==null) curpage=1;
+else curpage=Integer.valueOf(x);
+String to ="userCard.jsp?";
 %>
 
 <!DOCTYPE HTML>
@@ -110,7 +115,28 @@ if(user==null){
 				<sql:query dataSource="${snapshot}" var="result1">
 					 select *from paid_record where card_number=(select card_number from user_message s2 where user_id="<%=user.userID %>");
 				</sql:query>
-				
+				<%  int Pagesize=10;
+					int Pagenum=0;
+					int cur;
+					
+				 %>
+			    <c:forEach var="row" items="${result.rows}">
+			    	<% Pagenum=Pagenum+1; %>
+			    </c:forEach>
+			    
+			    <%
+			    	int sum=(Pagenum-1)/Pagesize+1;  //页数
+			    	
+			    	String a1,a2,a3,a4;
+			    	a1=to+"curpage=1";
+			    	if (curpage==1) a2=a1;
+			    	else a2=to+"curpage="+(curpage-1);
+			    	a4=to+"curpage="+sum;
+			    	if (curpage==sum) a3=a4;
+			    	else a3=to+"curpage="+(curpage+1);
+			
+			    	Pagenum=0;
+			     %>
 				<table class="table">
 						<thead><tr>
 						<th>时间</th>
@@ -119,7 +145,15 @@ if(user==null){
 						<th>预约编号</th>
 			            </tr></thead>
 					<c:forEach var="row" items="${result1.rows}">
-					<tr>
+					<%
+						Pagenum=Pagenum+1;
+						cur=(Pagenum-1)/Pagesize+1;
+						if (cur==curpage){
+					 %>
+						 <% if (Pagenum%2==0) {%> 
+						 	<tr class="success"> <%}else { %>
+							<tr>
+						 <%} %>
 					   <td><c:out value="${row.paid_time}"/></td>
 					   <td><c:out value="${row.paid_amount}"/></td>
 					   <td><c:out value="${row.paid_reason}"/></td>
@@ -127,8 +161,29 @@ if(user==null){
 					   		 <c:out value="${row.order_record_id}"/>
 					   </c:if></td>
 					</tr>
+					<%} %>
 					</c:forEach>
 				</table>
+				<ul class="pagination">
+					<li>
+						 <a href="<%=a1%>"> 首页</a>
+					</li>
+					<li>
+						 <a class="reactable-previous-page" href="<%=a2%>">上一页</a>
+					</li>
+					<li>
+						 <a class="reactable-next-page" href="<%=a3%>">下一页</a>
+					</li>
+					<li>
+						 <a href="<%=a4%>">尾页</a>
+					</li>
+					<li>
+					 	第<input id="showPage" name="showPage" class="form-control" style="width:50px;display:inline-block;" 
+							type="text" maxlength="5" value="<%=curpage%>"/>页/共<%=sum %>页
+				     
+						<button class="btn btn-info btn-sm " type="button" onclick="jump('<%=sum %>')"> 跳转</button>
+					</li>
+				</ul>
 			</div>
 		</div>
 		

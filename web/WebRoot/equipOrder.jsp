@@ -2,6 +2,8 @@
 <%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
 <%@page import="Bean.EquipInfoBean"%>
 <%@page import="Model.EquipHandler"%>
+<%@page import="Bean.CardInfoBean"%>
+<%@page import="Model.CardHandler"%>
 <%@page import="Bean.UserBean"%>
 <%
 String path = request.getContextPath();
@@ -21,7 +23,14 @@ if(equipinfo==null)
 	return ;
 }
 UserBean userBean=UserBean.checkSession(session);
-
+System.out.println(userBean.userName);
+CardInfoBean cardinfo=CardHandler.getCardInfoBeanByUser(userBean.userAccount);
+if (cardinfo==null)
+{
+	AlertHandle.AlertWarning(session, "警告", "没有找到该卡！");
+	response.sendRedirect("index.jsp");
+	return ;
+}
 %>
 
 <!DOCTYPE HTML>
@@ -60,7 +69,8 @@ UserBean userBean=UserBean.checkSession(session);
 	var sliderY=CloseTime;
 	var OrderDate;
 	var forbid_range=new Array();
-	
+	var v=<%=equipinfo.price %>;
+	var m=<%=cardinfo.remaining_sum %>;
 	function updateForbid(str){
 		forbid_range=new Array();
 		var arr=str.split(";");
@@ -108,6 +118,7 @@ UserBean userBean=UserBean.checkSession(session);
 					return false;
 		return true;
 	}
+	
 	function SliderChange(){
 			var str=$("#islider").val();
 			var arr=str.split(',');
@@ -135,8 +146,18 @@ UserBean userBean=UserBean.checkSession(session);
 	function float2time(time){
 		return formatNum(Math.floor(time))+":"+formatNum(Math.floor(time*60)%60);
 	}
+	function checkM(){  //price, money
+		var str=$("#islider").val();
+		var arr=str.split(',');
+		var t1=parseFloat(arr[0]);
+		var t2=parseFloat(arr[1]);
+		var sum=v*(t2-t1);
+		if (m>0 && m>=sum/2) return true;
+		return false;
+	}
 <% if(equipinfo.equip_status.equals("开放")){ %>
 	function orderSubmit(){
+		if (!checkM()) alert("余额不足");
 		<% if(userBean==null){ %>
 			alert("请先登录！");
 		<% }else
@@ -283,6 +304,12 @@ UserBean userBean=UserBean.checkSession(session);
 							<div class="col-xs-8 col-md-8">
 								<label>红色区域为已被预约时间段</label>
 							</div>
+							<div class="col-xs-6 col-md-6">
+								<label>卡内余额:<%=cardinfo.remaining_sum %></label>
+							</div>
+							<div class="col-xs-6 col-md-6">
+								<label>设备价格:<%=equipinfo.price %>元/小时</label>
+							</div>
 							<div class="col-xs-12 col-md-12 " style="padding:30px 20px 20px 20px;">
 							<div class="col-xs-10 col-md-10">
 							<input id="islider" class="slider" style="width: 100%;" data-slider-id="slider" data-slider-step="0.25" data-slider-min="0" data-slider-max="24" data-slider-value="[0,24]"  data-slider-ticks-snap-bounds="30"/>
@@ -304,11 +331,11 @@ UserBean userBean=UserBean.checkSession(session);
 							</div>
 							
 							</div>
-							<% if(equipinfo.equip_status.equals("开放")){ %>
-							<div class="col-md-2 col-xs-2"><button class="btn btn-primary" onclick="orderSubmit()">提交</button></div>
-						 	<%}else{ %>
-						 	<label>该设备不可预约</label>
-						 	<%} %>
+							<% if(equipinfo.equip_status.equals("关闭")){ %>
+								<label>该设备不可预约</label>
+						 	<%}else { %>
+						 		<div class="col-md-2 col-xs-2"><button class="btn btn-primary" onclick="orderSubmit()">提交</button></div>
+							<%}  %>
 						</div>
 					</div>
 				</nav>

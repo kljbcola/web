@@ -13,6 +13,9 @@ import Bean.UserBean;
 import Model.AlertHandle;
 import Model.CheckHandler;
 import Model.EquipHandler;
+import Model.CardHandler;
+import Bean.CardInfoBean;
+
 @WebServlet("/OrderProduce")
 public class OrderProduce extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -35,12 +38,19 @@ public class OrderProduce extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
 		try {
 			HttpSession session=request.getSession(false);
+			
 			UserBean userBean=UserBean.checkSession(session);
+			CardInfoBean cardinfo=CardHandler.getCardInfoBeanByUser(userBean.userAccount);
+			float m=Float.parseFloat(cardinfo.remaining_sum);
+			
 			String equip_number=request.getParameter("equip_number");
 			String order_date=request.getParameter("order_date");
 			float start_time=Float.valueOf(request.getParameter("start_time"));
 			float end_time=Float.valueOf(request.getParameter("end_time"));
 			EquipInfoBean equipInfoBean=EquipHandler.getEquipInfoBean(equip_number);
+			float v=Float.parseFloat(equipInfoBean.price);
+			float sum=(end_time-start_time)*v/2;
+			
 			if (end_time<start_time) {
 				float tmp=start_time;
 				start_time=end_time;
@@ -75,14 +85,22 @@ public class OrderProduce extends HttpServlet {
 				response.sendRedirect("equipManage.jsp");
 				return ;
 			}
+			if (!(m>0&&m>=sum)) {          //
+				AlertHandle.Alert(session, "预约无效", "卡内余额不足！");
+				response.sendRedirect("equipManage.jsp");
+				return ;
+			}
 			if(CheckHandler.checkOrderDate(equip_number, order_date, start_time, end_time)){
 				if(EquipHandler.equipOrder(userBean.userID, equip_number, order_date, start_time, end_time)){
+					//
+					CardHandler.setM(userBean.userAccount,m-sum);
+					CardHandler.addPaidInfo(equipInfoBean,cardinfo.card_number, -sum);
 					AlertHandle.AlertSuccess(session, "提示", "设备预约成功！");
 					response.sendRedirect("equipManage.jsp");
 					return ;
 				}
 				else {
-					AlertHandle.AlertDanger(session, "错误", "设备预约信息添加出错！");
+					AlertHandle.AlertDanger(session, "错误", "设备预约信息添加或扣除余额出错！");
 					response.sendRedirect("equipManage.jsp");
 					return ;
 				}
