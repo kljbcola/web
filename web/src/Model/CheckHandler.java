@@ -108,7 +108,8 @@ public class CheckHandler {
             rs = ps.executeQuery();
             while(rs.next())
             {    
-                if(!rs.getString("operation").equals("预约失败")){
+            	String opString=rs.getString("operation");
+                if(!opString.equals("预约失败")&&!opString.equals("预约取消")){
 	            	float x=Float.valueOf(rs.getString("start_time"));
 	            	float y=Float.valueOf(rs.getString("end_time"));
 	            	System.out.println("x:"+x+" y:"+y);

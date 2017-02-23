@@ -41,10 +41,10 @@ public class CardServlet extends HttpServlet {
 	}
 	PaidInfoBean getpaidByParameter(HttpServletRequest request)	{
 		PaidInfoBean paidInfoBean=new PaidInfoBean();
-		paidInfoBean.card_number			=request.getParameter("card_number");
+		paidInfoBean.user_id					=request.getParameter("user_id");
 		paidInfoBean.order_record_id			=request.getParameter("order_record_id");
-		paidInfoBean.paid_amount			=request.getParameter("paid_amount");
-		paidInfoBean.paid_reason			=request.getParameter("paid_reason");
+		paidInfoBean.paid_amount				=request.getParameter("paid_amount");
+		paidInfoBean.paid_reason				=request.getParameter("paid_reason");
 		paidInfoBean.paid_time					=request.getParameter("paid_time");
 		
 		return paidInfoBean;
@@ -105,7 +105,14 @@ public class CardServlet extends HttpServlet {
 					AlertHandle.AlertWarning(session, "警告", "权限不足!");
 				else{
 					PaidInfoBean paidInfoBean=getpaidByParameter(request);
-					if(CardHandler.addPaidInfo(paidInfoBean)){
+					String card_number=request.getParameter("card_number");
+					if(card_number==null){
+						AlertHandle.AlertDanger(session, "失败", "操作错误!");
+						response.sendRedirect("index.jsp");
+						return;
+					}
+					paidInfoBean.user_id=CardHandler.getUserByCard(card_number);
+					if(CardHandler.addPaidInfoAndMoney(paidInfoBean)){
 						System.out.printf("paid");
 						AlertHandle.AlertSuccess(session, "成功", "充值IC卡成功!");
 					}else 

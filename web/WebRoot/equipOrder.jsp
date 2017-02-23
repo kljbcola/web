@@ -23,6 +23,11 @@ if(equipinfo==null)
 	return ;
 }
 UserBean userBean=UserBean.checkSession(session);
+if(userBean==null){
+	AlertHandle.AlertWarning(session, "警告", "请登录！");
+	response.sendRedirect("index.jsp");
+	return ;
+}
 System.out.println(userBean.userName);
 CardInfoBean cardinfo=CardHandler.getCardInfoBeanByUser(userBean.userAccount);
 if (cardinfo==null)
@@ -135,6 +140,10 @@ if (cardinfo==null)
 				$("#feedback").attr("class","glyphicon glyphicon-remove form-control-feedback");
 			}
 	}
+	function getOrderMoney(){
+		var price=<%=equipinfo.price %>;
+		return (sliderY-sliderX)*price;
+	}
 	function formatNum(a){
 		var b="0"+a;
 		return b[b.length-2]+b[b.length-1];
@@ -152,12 +161,12 @@ if (cardinfo==null)
 		var t1=parseFloat(arr[0]);
 		var t2=parseFloat(arr[1]);
 		var sum=v*(t2-t1);
-		if (m>0 && m>=sum/2) return true;
+		if (m>=0 && m>=sum/2) return true;
 		return false;
 	}
 <% if(equipinfo.equip_status.equals("开放")){ %>
 	function orderSubmit(){
-		if (!checkM()) alert("余额不足");
+		if (!checkM()) {alert("余额不足");return;}
 		<% if(userBean==null){ %>
 			alert("请先登录！");
 		<% }else
@@ -170,8 +179,10 @@ if (cardinfo==null)
 				if(!checkTime(sliderX,sliderY))alert("所选时间无效！");
 				else
 				if(confirm("确认要预约吗？\n预约日期："+OrderDate+"\n预约时间："+
-					$("#start_time").val()+"--"+$("#end_time").val())){
-					post('OrderProduce', {equip_number:<%=equipnum%>,order_date:OrderDate,start_time:sliderX,end_time:sliderY});
+					$("#start_time").val()+"--"+$("#end_time").val()
+					+"\n所需总金额"+getOrderMoney()
+					+"\n预支付金额:"+getOrderMoney()/2)){
+					post('OrderProduce', {equip_number:<%=equipnum%>,op:'order',order_date:OrderDate,start_time:sliderX,end_time:sliderY});
 				}
 			<%} 
 		}%>

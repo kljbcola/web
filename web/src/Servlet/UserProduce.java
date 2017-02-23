@@ -95,8 +95,13 @@ public class UserProduce extends HttpServlet {
 				if(user==null||!user.userType.equals("管理员"))
 					AlertHandle.AlertWarning(session, "警告", "权限不足!");
 				else {
-					if(AdminHandler.delUser(userID))
+					if(AdminHandler.delUser(userID)){
 						AlertHandle.AlertSuccess(session, "成功", "删除用户成功!");
+						
+						
+						
+					}
+						
 					else 
 						AlertHandle.AlertWarning(session, "失败", "删除用户失败!");
 				}

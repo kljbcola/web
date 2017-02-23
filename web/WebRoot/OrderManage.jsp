@@ -73,6 +73,11 @@ System.out.println(sql);
 			if (curpage>sum) curpage=sum;
 			 window.location.href="<%=to%>"+"curpage="+curpage;
 		}
+		function disorder(orderID){
+			if(confirm("确认取消该预约吗？")){
+				post("OrderProduce",{order_id:orderID,op:'disorder'});
+			}
+		}
 		/*function getClassName(abc){
 			if (!document.getElementsByClassName) {
 				var list=document.getElementsByTagName('*');
@@ -162,6 +167,8 @@ System.out.println(sql);
 						<th>预约日期</th>
 						<th>预约开始时间</th>
 						<th>预约结束时间</th>
+						<th>状态</th>
+						<th>操作</th>
 			            </tr></thead>
 					<c:forEach var="row" items="${result.rows}">
 					<%
@@ -178,6 +185,10 @@ System.out.println(sql);
 						   <td><c:out value="${row.order_date}"/></td>
 						   <td class="start_time"><c:out value="${row.start_time}"/></td>
 						   <td class="end_time"><c:out value="${row.end_time}"/></td>
+						   <td><c:out value="${row.operation}"/></td>
+						   <c:if test="${row.operation=='预约已生效'||row.operation=='预约处理中'}">
+						   <td><button class="btn btn-default btn-success" onclick="disorder('${row.order_record_id}')">取消预约</button></td>
+						   </c:if>
 						</tr>
 					<%} %>
 					</c:forEach>

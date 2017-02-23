@@ -2,8 +2,10 @@ package Model;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.* ;
 import java.text.*; 
+
 import Bean.CardInfoBean;
 import Bean.PaidInfoBean;
 import Bean.EquipInfoBean;
@@ -14,9 +16,17 @@ public class CardHandler {
     static ResultSet rs;
     private static String setValue(String val)
 	{
-		
-		if(val!=null&&!val.equals(""))
-			return "\'"+val+"\'";
+		if(val!=null&&!val.equals("")){
+			StringBuilder stringBuilder=new StringBuilder();
+			stringBuilder.append('\'');
+			for(int i=0;i<val.length();i++){
+				char a=val.charAt(i);
+				if(a=='\''|| a=='\"')stringBuilder.append('\\');
+				stringBuilder.append(a);
+			}
+			stringBuilder.append('\'');
+			return stringBuilder.toString();
+		}
 		return "null";
 	}
     
@@ -175,6 +185,34 @@ public class CardHandler {
 	        else 
 	        	return true;
 	}
+    public static String getUserByCard(String card_number){
+    	String user_id=null;
+		con = DbPool.getConnection();
+	        String strSql = "select user_id from user_message where card_number=?;";
+	        try
+	        {
+	            ps = con.prepareStatement(strSql);
+	            ps.setString(1,card_number);
+	            rs = ps.executeQuery();
+	            if(rs.next())
+	            {    
+	            	user_id=rs.getString(1);
+	                //释放资源
+	                DbPool.DBClose(con, ps, rs);            
+	            }
+	            else
+	            {
+	                //释放资源
+	                DbPool.DBClose(con, ps, rs);
+	            }            
+	        }catch(Exception e)
+	        {
+	            e.printStackTrace();
+	            System.out.println("getCardInfoBean出错!");
+	            return null;
+	        }
+		return user_id;
+	}
     public static boolean changeUser(CardInfoBean CardInfoBean){
     	System.out.println("修改用户中~~");
     	con = DbPool.getConnection();
@@ -231,7 +269,7 @@ public class CardHandler {
     	
 		 	float res;
 		 	String s="";
-	        String Sql = "SELECT remaining_sum FROM card_message where card_number="+setValue(paidInfoBean.card_number)+";";
+	        String Sql = "SELECT remaining_sum FROM card_message where card_number=(select card_number from user_message where user_id="+setValue(paidInfoBean.user_id)+");";
 	  
 	        try
 	        {	
@@ -245,8 +283,8 @@ public class CardHandler {
 		            System.out.println(s+" "+paidInfoBean.paid_amount);
 		            res=Float.parseFloat(s)+Float.parseFloat(paidInfoBean.paid_amount);
 		            s=String.valueOf(res);
-		            DbPool.DBClose(con, ps, rs);    
-	            }else  DbPool.DBClose(con, ps, rs);  
+	            }
+	            DbPool.DBClose(con, ps, rs);  
 	        }catch(Exception e)
 	        {
 	            e.printStackTrace();
@@ -254,7 +292,7 @@ public class CardHandler {
 	            return false;
 	        }
 		 	String strSql = "update card_message set remaining_sum = "+setValue(s)
-		 					+" where card_number="+setValue(paidInfoBean.card_number);
+		 					+" where card_number=(select card_number from user_message where user_id="+setValue(paidInfoBean.user_id)+");";
 	        int cs;
 	        try
 	        {
@@ -272,18 +310,23 @@ public class CardHandler {
 	        if (cs<1) return false;
 	        return true;
     }
+    public static boolean addPaidInfoAndMoney(PaidInfoBean paidInfoBean){
+    	return addPaidInfo(paidInfoBean)&&addCardM(paidInfoBean);
+    }
     public static boolean addPaidInfo(PaidInfoBean paidInfoBean){
     	System.out.println("添加支付信息中~~");
-    	if (!addCardM(paidInfoBean)) return false;//添加卡内余额
-    	con = DbPool.getConnection();        
+    	con = DbPool.getConnection();  
+    	Date dNow = new Date( );
+		   SimpleDateFormat ft = 
+		   new SimpleDateFormat ("yyyy-MM-dd HH:mm:ss");
 		 int rs;
 	        String strSql = "INSERT INTO paid_record "    
-	        		+ "(card_number,	order_record_id,		paid_amount,		paid_reason,		paid_time)  values "+"("
-	        		+  			  setValue(paidInfoBean.card_number)
+	        		+ "(user_id,	order_record_id,		paid_amount,		paid_reason,		paid_time)  values "+"("
+	        		+  			  setValue(paidInfoBean.user_id)
 	        		+ ", "   	+ setValue(paidInfoBean.order_record_id) 
 	        		+ ", " 		+ setValue(paidInfoBean.paid_amount)
 	        		+ ", " 		+ setValue(paidInfoBean.paid_reason)
-	        		+ ", " 		+ setValue(paidInfoBean.paid_time) +");"; //添加充值信息
+	        		+ ", " 		+ setValue(ft.format(dNow)) +");"; //添加充值信息
 	        System.out.println(strSql);
 	        try
 	        {
@@ -293,7 +336,7 @@ public class CardHandler {
 	        }catch(Exception e)
 	        {
 	            e.printStackTrace();
-	            System.out.println("插入充值记录出错!");
+	            System.out.println("插入支付记录出错!");
 	            return false;
 	        }
 	        DbPool.DBClose(con, ps);   
@@ -366,7 +409,30 @@ public class CardHandler {
         if (rs<1) return false;
         else return true;
     }
-    public static boolean addPaidInfo(EquipInfoBean equipInfoBean,String card_number,float v){
+    public static PaidInfoBean getPaidInfo(String order_id){
+    	PaidInfoBean paidInfoBean=null;
+    	con = DbPool.getConnection();
+        String strSql = "select * from paid_record where order_record_id=?;";
+        try {
+            ps = con.prepareStatement(strSql);
+            ps.setString(1, order_id);
+			rs = ps.executeQuery();
+			if(rs.next()){
+				paidInfoBean=new PaidInfoBean();
+				paidInfoBean.user_id=rs.getString("user_id");
+				paidInfoBean.order_record_id=rs.getString("order_record_id");
+				paidInfoBean.paid_amount=rs.getString("paid_amount");
+				paidInfoBean.paid_reason=rs.getString("paid_reason");
+				paidInfoBean.paid_record_id=rs.getString("paid_record_id");
+				paidInfoBean.paid_time=rs.getString("paid_time");
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+    	return paidInfoBean;
+    }
+    public static boolean addPaidInfo(EquipInfoBean equipInfoBean,String order_id,String user_id,float v){
     	System.out.println("添加支付信息中~~");
     	con = DbPool.getConnection();        
 		 int rs;
@@ -374,11 +440,11 @@ public class CardHandler {
 		   SimpleDateFormat ft = 
 		   new SimpleDateFormat ("yyyy-MM-dd HH:mm:ss");
 	        String strSql = "INSERT INTO paid_record "    
-	        		+ "(card_number,	order_record_id,		paid_amount,		paid_reason,		paid_time)  values "+"("
-	        		+  			  setValue(card_number)
-	        		+ ", "   	+ setValue("0") 
+	        		+ "(user_id,	order_record_id,		paid_amount,		paid_reason,		paid_time)  values "+"("
+	        		+  			  setValue(user_id)
+	        		+ ", "   	+ setValue(order_id)
 	        		+ ", " 		+ setValue(String.valueOf(v))
-	        		+ ", " 		+ setValue(equipInfoBean.equip_name)
+	        		+ ", " 		+ setValue("预约设备:"+equipInfoBean.equip_name+"预付款")
 	        		+ ", " 		+ setValue(ft.format(dNow)) +");"; //添加充值信息
 	        System.out.println(strSql);
 	        try
@@ -398,17 +464,17 @@ public class CardHandler {
 	        else 
 	        	return true;
     }
-    public static boolean setM(String user_name , float v){
+    public static boolean setM(String user_id , float v){				
     	con = DbPool.getConnection();
     	String s=String.valueOf(v);
-        String strSql = "update card_message set remaining_sum="+setValue(s)+" where status='正常'and user_name=?;";
-        System.out.println(strSql+user_name+v);
+        String strSql = "update card_message set remaining_sum="+setValue(s)+" where status='正常'and card_number=(select card_number from user_message where user_id=?);";
+        System.out.println(strSql+user_id+v);
         
         int rs;
         try
         {
             ps = con.prepareStatement(strSql);
-            ps.setString(1,user_name);
+            ps.setString(1,user_id);
             
             rs = ps.executeUpdate();
        

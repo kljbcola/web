@@ -2,8 +2,10 @@ package Model;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import Bean.EquipInfoBean;
+import Bean.OrderInfo;
 import Data.DbPool;
 
 public class EquipHandler {
@@ -12,9 +14,17 @@ public class EquipHandler {
     static ResultSet rs;
     private static String setValue(String val)
 	{
-		
-		if(val!=null&&!val.equals(""))
-			return "\'"+val+"\'";
+		if(val!=null&&!val.equals("")){
+			StringBuilder stringBuilder=new StringBuilder();
+			stringBuilder.append('\'');
+			for(int i=0;i<val.length();i++){
+				char a=val.charAt(i);
+				if(a=='\''|| a=='\"')stringBuilder.append('\\');
+				stringBuilder.append(a);
+			}
+			stringBuilder.append('\'');
+			return stringBuilder.toString();
+		}
 		return "null";
 	}
     
@@ -205,8 +215,9 @@ public class EquipHandler {
         if (rs<1) return false;
         else return true;
     }
-    public static boolean equipOrder(String userID,String equipID,String date,float start_time,float end_time)
+    public static String equipOrder(String userID,String equipID,String date,float start_time,float end_time)
     {
+    	String orderID=null;
     	con = DbPool.getConnection();
 		 int rs;
 	        String strSql = "INSERT INTO order_record "
@@ -221,15 +232,113 @@ public class EquipHandler {
 	            ps = con.prepareStatement(strSql);
 	            System.out.println(strSql);
 	            rs = ps.executeUpdate();
+	            ps.close();
 	        }catch(Exception e)
 	        {
 	            e.printStackTrace();
 	            System.out.println("数据添加出错!");
+	            DbPool.DBClose(con, ps);
+	            return null;
+	        }
+	        if(rs<1){
+	        	return null;
+	        }
+	        else {
+	        	try {
+	        		strSql ="SELECT LAST_INSERT_ID();";
+					ps = con.prepareStatement(strSql);
+					ResultSet rss = ps.executeQuery();
+					rss.next();
+					orderID=rss.getString(1);
+					System.out.println(orderID);
+		            DbPool.DBClose(con, ps);
+
+				} catch (SQLException e) {
+					System.out.println("数据查询出错!");
+					e.printStackTrace();
+					DbPool.DBClose(con, ps);
+				}
+	        	if (orderID.equals("0")) {
+					return null;
+				}
+	        	else return orderID;
+	        	
+	        }
+    }
+    public static boolean delorder(String id)
+    {
+        //从数据访问组件中取得连接
+        con = DbPool.getConnection();
+        String strSql = "delete from order_record where order_record_id=?;";
+        int rs;
+        try
+        {
+            ps = con.prepareStatement(strSql);
+            ps.setString(1,id);
+            rs = ps.executeUpdate();
+       
+        }catch(Exception e)
+        {
+            e.printStackTrace();
+            System.out.println("delorder出错!");
+            return false;
+        }
+        if (rs<1) return false;
+        else return true;
+    }
+    public static boolean setOrderStatus(String id,String status)
+    {
+    	con = DbPool.getConnection();
+		 int rs;
+	        String strSql = "update order_record set operation=?"
+	        		+ " where order_record_id=?;";
+	        try
+	        {
+	            ps = con.prepareStatement(strSql);
+	            ps.setString(1, status);
+	            ps.setString(2, id);
+	            System.out.println(strSql);
+	            rs = ps.executeUpdate();
+	        }catch(Exception e)
+	        {
+	            e.printStackTrace();
+	            System.out.println("数据修改出错!");
 	            return false;
 	        }
 	        if(rs<1)
 	        	return false;
 	        else 
 	        	return true;
+    }
+    public static OrderInfo getOrderInfo(String id)
+    {
+    	con = DbPool.getConnection();
+    	OrderInfo orderInfo=null;
+		 ResultSet rs;
+	        String strSql = "select * from order_record where order_record_id=?;";
+	        try
+	        {
+	            ps = con.prepareStatement(strSql);
+	            ps.setString(1, id);
+	            System.out.println(strSql);
+	            rs = ps.executeQuery();
+	            orderInfo=new OrderInfo();
+	            rs.next();
+	            orderInfo.equip_number=rs.getString("equip_number");
+	            orderInfo.user_id=rs.getString("user_id");
+	            orderInfo.order_date=rs.getString("order_date");
+	            orderInfo.start_time=rs.getString("start_time");
+	            orderInfo.end_time=rs.getString("end_time");
+	            orderInfo.exp_start_time=rs.getString("exp_start_time");
+	            orderInfo.exp_end_time=rs.getString("exp_end_time");
+	            orderInfo.operation=rs.getString("operation");
+	            orderInfo.remark=rs.getString("remark");
+	        }catch(Exception e)
+	        {
+	            e.printStackTrace();
+	            System.out.println("数据修改出错!");
+	            return null;
+	        }
+	        return orderInfo;
     }
 }

@@ -32,6 +32,11 @@ public class FastQuery extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
 		response.setContentType("text/html;charset=utf-8");
 		PrintWriter writer=response.getWriter();
+		
+		
+		
+		
+		
 		String query;
 		query=request.getParameter("account");
 		if(query!=null){
@@ -48,12 +53,14 @@ public class FastQuery extends HttpServlet {
 				if(equipid!=null){
 					String result=CheckHandler.getOrderMessage(equipid, query);
 					writer.print(result);
+					System.out.println("order_date");
+					System.out.println(result);
 				}
 			}
 			else {
 				query=request.getParameter("equipid");
 				if(query!=null){
-					System.out.println("order_date");
+					
 					if(CheckHandler.checkEquipID(query))
 						writer.print("true");
 					else

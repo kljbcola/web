@@ -97,7 +97,7 @@ String to ="userCard.jsp?";
 				   		 <button class="btn btn-xs btn-danger" onclick="cardW('${row.card_number}')">挂失</button>
 				   </c:if>
 				   <c:if test="${row.status=='异常'}">
-				   		 <button class="btn btn-xs btn-danger" onclick="cardR('${row.card_number}')">解挂</button>
+				   		 <button class="btn btn-xs btn-info" onclick="cardR('${row.card_number}')">解挂</button>
 				   </c:if></th>
 				  
 				</c:forEach>
@@ -113,7 +113,7 @@ String to ="userCard.jsp?";
 					账单
 				</h3>
 				<sql:query dataSource="${snapshot}" var="result1">
-					 select *from paid_record where card_number=(select card_number from user_message s2 where user_id="<%=user.userID %>");
+					 select *from paid_record where user_id=<%=user.userID %>;
 				</sql:query>
 				<%  int Pagesize=10;
 					int Pagenum=0;

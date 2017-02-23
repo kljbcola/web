@@ -124,13 +124,21 @@ public class AdminHandler {
 	        }
 		return userInfoBean;
 	}
-	private static String setValue(String val)
-	{
-		
-		if(val!=null&&!val.equals(""))
-			return "\'"+val+"\'";
-		return "null";
-	}
+	 private static String setValue(String val)
+		{
+			if(val!=null&&!val.equals("")){
+				StringBuilder stringBuilder=new StringBuilder();
+				stringBuilder.append('\'');
+				for(int i=0;i<val.length();i++){
+					char a=val.charAt(i);
+					if(a=='\''|| a=='\"')stringBuilder.append('\\');
+					stringBuilder.append(a);
+				}
+				stringBuilder.append('\'');
+				return stringBuilder.toString();
+			}
+			return "null";
+		}
 	public static boolean setUserCard(String userID,String userIC_Number) {
 		con = DbPool.getConnection();
 		int rs;

@@ -78,6 +78,15 @@ if(user==null||!user.userType.equals("管理员")){
 		  xmlhttp.open("GET","FastQuery?account="+str,true);
 		  xmlhttp.send();
 		}
+		function pwhint(){
+			if(document.getElementById("user_password").value!=document.getElementById("user_password_again").value){
+				document.getElementById("pwhint").innerHTML="确认密码*(两次密码不一致！)";
+			}
+			else
+			{
+				document.getElementById("pwhint").innerHTML="确认密码*(输入正确！)";
+			}
+		}
         function checkCard(){
         	var xmlhttp;
 			var str=$('#user_card_number').val();
@@ -181,8 +190,8 @@ if(user==null||!user.userType.equals("管理员")){
             <label for="user_password">密码*</label>
             <input class="form-control" id="user_password" name="user_password" type="password"/>
             
-            <label for="user_password_again">确认密码*</label>
-            <input class="form-control" id="user_password_again" name="user_password_again" type="password"/>
+            <label for="user_password_again" id="pwhint">确认密码*</label>
+            <input class="form-control" id="user_password_again" onchange="pwhint()" name="user_password_again" type="password"/>
             
             <label for="user_account">名称*</label>
             <input class="form-control" id="user_name" name="user_name" type="text"/>
