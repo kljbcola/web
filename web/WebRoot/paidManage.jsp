@@ -77,7 +77,7 @@ if(user==null||!user.userType.equals("管理员")){
 			    	}
 		    	}
 		  	}
-		  	xmlhttp.open("GET","FastQuery?card_number="+str,true);
+		  	xmlhttp.open("GET","FastQuery?op=card&card_number="+str,true);
 		  	xmlhttp.send();
         }
         function save(){

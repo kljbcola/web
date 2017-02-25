@@ -75,7 +75,7 @@ if(user==null||!user.userType.equals("管理员")){
 		    	}
 		    }
 		  }
-		  xmlhttp.open("GET","FastQuery?account="+str,true);
+		  xmlhttp.open("GET","FastQuery?op=account&account="+str,true);
 		  xmlhttp.send();
 		}
 		function pwhint(){

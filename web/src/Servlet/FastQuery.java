@@ -32,23 +32,20 @@ public class FastQuery extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
 		response.setContentType("text/html;charset=utf-8");
 		PrintWriter writer=response.getWriter();
-		
-		
-		
-		
-		
-		String query;
-		query=request.getParameter("account");
-		if(query!=null){
-			System.out.println("account");
+		String operation=null,query=null;
+		operation=request.getParameter("op");
+		System.out.println(operation);
+		switch (operation) {
+		case "account":
+			query=request.getParameter("account");
 			if(CheckHandler.checkUserAccount(query))
 				writer.print("true");
 			else
 				writer.print("false");
-		}
-		else {
-			query=request.getParameter("order_date");
-			if (query!=null) {
+			break;
+		case "order":
+			{
+				query=request.getParameter("order_date");
 				String equipid=request.getParameter("equipid");
 				if(equipid!=null){
 					String result=CheckHandler.getOrderMessage(equipid, query);
@@ -56,26 +53,25 @@ public class FastQuery extends HttpServlet {
 					System.out.println("order_date");
 					System.out.println(result);
 				}
+				break;
 			}
-			else {
-				query=request.getParameter("equipid");
-				if(query!=null){
-					
-					if(CheckHandler.checkEquipID(query))
-						writer.print("true");
-					else
-						writer.print("false");
-				}
-				else{
-					query=request.getParameter("card_number");
-					if(CheckHandler.checkCardNumber(query))
-						writer.print("true");
-					else
-						writer.print("false");
-				}
-			}
+		case "equip":
+			query=request.getParameter("equipid");
+			if(CheckHandler.checkEquipID(query))
+				writer.print("true");
+			else
+				writer.print("false");
+			break;
+		case "card":
+			query=request.getParameter("card_number");
+			if(CheckHandler.checkCardNumber(query))
+				writer.print("true");
+			else
+				writer.print("false");
+			break;
+		default:
+			break;
 		}
-		
 		
 	}
 

@@ -52,6 +52,9 @@
 						<li>
 							<a href="userInfo.jsp?userID=<%=userBean.userID %>">修改个人信息</a>
 						</li>
+						<li>
+							<a href="userSetPW.jsp">修改密码</a>
+						</li>
 						<li class="divider"/>
 						<li>
 							<a href="Logout">退出登陆</a>

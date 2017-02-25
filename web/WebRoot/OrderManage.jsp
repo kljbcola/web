@@ -1,11 +1,10 @@
-
-<%@page import="Data.DbPool"%>
+<%@ page import="Data.DbPool"%>
 <%@ page import="java.io.*,java.util.*,java.sql.*"%>
 <%@ page import="javax.servlet.http.*,javax.servlet.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/sql" prefix="sql"%>
-<%@page import="Model.AdminHandler"%>
-<%@page import="Model.AlertHandle"%>
+<%@ page import="Model.AdminHandler"%>
+<%@ page import="Model.AlertHandle"%>
 <%@ page contentType="text/html" language="java"
  import="java.util.*,Bean.UserBean,Model.AdminHandler" 
  pageEncoding="utf-8" errorPage=""%>
@@ -26,7 +25,11 @@ if(user==null){
 	response.sendRedirect("index.jsp");
 	return ;
 }
-String sql="SELECT * from order_record natural join equip_message where user_id=\""+user.userID+"\";";
+String sql;
+if(user.userType.equals("管理员"))
+	sql="SELECT * from order_record natural join equip_message;";
+else
+	sql="SELECT * from order_record natural join equip_message where user_id=\""+user.userID+"\";";
 System.out.println(sql);
 %>
 <!doctype html>
@@ -62,11 +65,6 @@ System.out.println(sql);
 	  return temp;
 	  }	
 	
-	   function del_usermessage(userid){
-	           if(confirm("是否删除该用户？")){
-	           	post("UserProduce", {user_id:userid,operation:'del'});
-	           }
-	       }
 		function jump(sum){
 			var curpage=parseInt($("#showPage").val());
 			if (curpage<1) curpage=1;
@@ -78,21 +76,6 @@ System.out.println(sql);
 				post("OrderProduce",{order_id:orderID,op:'disorder'});
 			}
 		}
-		/*function getClassName(abc){
-			if (!document.getElementsByClassName) {
-				var list=document.getElementsByTagName('*');
-				var arr=[];
-				for (var i=0;i<list.length;i++) {
-				if(list[i].className==abc){
-				//在浏览器版本不支持该方法时使用className属性
-				arr.push(list[i]);
-				}
-				}
-				return arr;
-			} else{
-			return document.getElementsByClassName(abc);
-			}
-		}*/
 		function formatNum(a){
 			var b="0"+a;
 			return b[b.length-2]+b[b.length-1];

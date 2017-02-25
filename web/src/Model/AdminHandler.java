@@ -267,4 +267,32 @@ public class AdminHandler {
 	        else 
 	        	return true;
 	}
+	public static boolean resetUser(String user_id)
+	{
+		 return setUserPW(user_id, "123456");
+	}
+	public static boolean setUserPW(String user_id,String user_pw)
+	{
+		 con = DbPool.getConnection();
+		 int rs;
+	        String strSql = "update user_message set"
+	        		+ "  password=md5("+setValue(user_pw)+") where user_id=" + setValue(user_id) + ";";
+	        try
+	        {
+	            ps = con.prepareStatement(strSql);
+	            System.out.println(strSql);
+	            rs = ps.executeUpdate();
+	            //释放资源
+	            DbPool.DBClose(con, ps);
+	        }catch(Exception e)
+	        {
+	            e.printStackTrace();
+	            System.out.println("数据修改出错!");
+	            return false;
+	        }
+	        if(rs<1)
+	        	return false;
+	        else 
+	        	return true;
+	}
 }

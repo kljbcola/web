@@ -95,6 +95,11 @@ if (c==null) c="";
 			if (curpage>sum) curpage=sum;
 			 window.location.href="<%=to%>"+"curpage="+curpage;
 		}
+		function reset_userpw(userid){
+			if(confirm("是否重置该用户密码？\n 重置密码的用户密码会改为123456。")){
+		        post("UserProduce", {user_id:userid,operation:'reset'});
+		    }
+		}
     </script>
 
 </head>
@@ -177,7 +182,9 @@ if (c==null) c="";
 						   <td><c:out value="${row.user_type}"/></td>
 						   <td>
 					            <a class="btn btn-xs btn-info" href="userInfo.jsp?userID=${row.user_id}">修改</a>
+					            <button class="btn btn-xs btn-warning" onclick="reset_userpw('${row.user_id}')">重置密码</button>
 					            <button class="btn btn-xs btn-danger" onclick="del_usermessage('${row.user_id}')">删除</button>
+					            
 							</td>
 						</tr>
 					<%} %>

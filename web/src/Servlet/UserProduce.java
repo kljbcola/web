@@ -13,6 +13,7 @@ import Bean.UserBean;
 import Bean.UserInfoBean;
 import Model.AdminHandler;
 import Model.AlertHandle;
+import Model.LoginHandler;
 
 @WebServlet("/UserProduce")
 public class UserProduce extends HttpServlet {
@@ -97,15 +98,44 @@ public class UserProduce extends HttpServlet {
 				else {
 					if(AdminHandler.delUser(userID)){
 						AlertHandle.AlertSuccess(session, "成功", "删除用户成功!");
-						
-						
-						
 					}
-						
 					else 
 						AlertHandle.AlertWarning(session, "失败", "删除用户失败!");
 				}
 				response.sendRedirect("userManage.jsp");
+				return ;
+			case "reset":
+				if(user==null||!user.userType.equals("管理员"))
+					AlertHandle.AlertWarning(session, "警告", "权限不足!");
+				else {
+					if(AdminHandler.resetUser(userID)){
+						AlertHandle.AlertSuccess(session, "成功", "重置用户密码成功!");
+					}
+					else 
+						AlertHandle.AlertWarning(session, "失败", "重置用户密码失败!");
+				}
+				response.sendRedirect("userManage.jsp");
+				return ;	
+			case "setpw":
+				if(user==null)
+					AlertHandle.AlertWarning(session, "警告", "请登录!");
+				else {
+					String oldpw=request.getParameter("user_old_password");
+					String newpw=request.getParameter("user_new_password");
+					System.out.println(user.userAccount);
+					System.out.println(oldpw+"\n"+newpw);
+					if(LoginHandler.checkPassWord(user.userAccount, oldpw)){
+						if(AdminHandler.setUserPW(user.userID, newpw))
+							AlertHandle.AlertSuccess(session, "成功", "设置用户密码成功!");
+						else 
+							AlertHandle.AlertWarning(session, "失败", "设置用户密码失败!");
+					}
+					else
+					{
+						AlertHandle.AlertWarning(session, "失败", "密码错误!");
+					}
+				}
+				response.sendRedirect("userSetPW.jsp");
 				return ;
 			default:
 				AlertHandle.AlertWarning(session, "失败", "未知操作!");

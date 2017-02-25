@@ -90,7 +90,7 @@ int row=3;
 		    	}
 		    }
 		  }
-		  xmlhttp.open("GET","FastQuery?equipid="+str,true);
+		  xmlhttp.open("GET","FastQuery?op=equip&equipid="+str,true);
 		  xmlhttp.send();
 		}
         function save(){

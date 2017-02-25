@@ -210,7 +210,7 @@ if (cardinfo==null)
 				updateForbid(str);
 			}
 		}
-		xmlhttp.open("GET","FastQuery?order_date="+OrderDate+"&equipid="+<%=equipnum%>,true);
+		xmlhttp.open("GET","FastQuery?op=order&order_date="+OrderDate+"&equipid="+<%=equipnum%>,true);
 		xmlhttp.send();
 	}
 	function post(URL, PARAMS) {
