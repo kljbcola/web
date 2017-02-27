@@ -118,8 +118,7 @@ public class CardServlet extends HttpServlet {
 					}else 
 						AlertHandle.AlertWarning(session, "失败", "充值IC卡失败!");
 				}
-				response.sendRedirect("index.jsp");
-				return;
+				break;
 			case "del":
 				if(!user.userType.equals("管理员"))
 					AlertHandle.AlertWarning(session, "警告", "权限不足!");

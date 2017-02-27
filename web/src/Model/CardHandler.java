@@ -55,6 +55,26 @@ public class CardHandler {
 		}
         return result;
     }
+    public static float queryPaid(String card_number){
+    	con = DbPool.getConnection();
+        String strSql = "select consumption from card_message where card_number=?;";
+    	float result=0;
+        try {
+        	ps = con.prepareStatement(strSql);
+            ps.setString(1,card_number);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+				
+            	result=Float.valueOf(rs.getString("consumption"));
+            	//释放资源
+                DbPool.DBClose(con, ps, rs);           
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+            System.out.println("getCardInfoBean出错!");
+		}
+        return result;
+    }
     public static CardInfoBean getCardInfoBeanByUser(String Username){
     	System.out.println(Username);
     	CardInfoBean CardInfoBean=null;
@@ -264,7 +284,7 @@ public class CardHandler {
 	        else 
 	        	return true;
     }
-    public static boolean addCardM(PaidInfoBean paidInfoBean){
+    public static boolean addCardM(PaidInfoBean paidInfoBean){ //添加消费总额和余额
     	System.out.println("添加IC卡余额中~~");
     	
 		 	float res;
@@ -368,6 +388,25 @@ public class CardHandler {
         if (rs<1) return false;
         else return true;
     }
+    public static boolean addSum(String num){//挂失
+    	con = DbPool.getConnection();
+        String strSql = "update card_message set status=\"异常\" where card_number=?;";
+        int rs;
+        try
+        {
+            ps = con.prepareStatement(strSql);
+            ps.setString(1,num);
+            rs = ps.executeUpdate();
+       
+        }catch(Exception e)
+        {
+            e.printStackTrace();
+            System.out.println("挂失出错!");
+            return false;
+        }
+        if (rs<1) return false;
+        else return true;
+    }
     public static boolean cardW(String num){//挂失
     	con = DbPool.getConnection();
         String strSql = "update card_message set status=\"异常\" where card_number=?;";
@@ -451,7 +490,7 @@ public class CardHandler {
 		}
     	return paidInfoBean;
     }
-    public static boolean addPaidInfo(EquipInfoBean equipInfoBean,String order_id,String user_id,float v){
+    public static boolean addPaidInfo(EquipInfoBean equipInfoBean,String order_id,String user_id,float v){  //预约
     	System.out.println("添加支付信息中~~");
     	con = DbPool.getConnection();        
 		 int rs;
@@ -486,7 +525,7 @@ public class CardHandler {
     public static boolean setM(String user_id , float v){				
     	con = DbPool.getConnection();
     	String s=String.valueOf(v);
-        String strSql = "update card_message set remaining_sum="+setValue(s)+" where status='正常'and card_number=(select card_number from user_message where user_id=?);";
+        String strSql = "update card_message set remaining_sum="+setValue(s)+" where card_number=(select card_number from user_message where user_id=?);";
         System.out.println(strSql+user_id+v);
         
         int rs;
@@ -506,5 +545,44 @@ public class CardHandler {
         if (rs<1) return false;
         else return true;
     }
-
+    public static boolean setC(String user_id , float v){			//修改消费记录	
+    	con = DbPool.getConnection();
+    	String s=String.valueOf(v);
+        String strSql = "update card_message set consumption="+setValue(s)+" where card_number=(select card_number from user_message where user_id=?);";
+        System.out.println(strSql+user_id+v);
+        int rs;
+        try
+        {
+            ps = con.prepareStatement(strSql);
+            ps.setString(1,user_id);
+            rs = ps.executeUpdate();
+       
+        }catch(Exception e)
+        {
+            e.printStackTrace();
+            System.out.println("修改消费记录出错!");
+            return false;
+        }
+        if (rs<1) return false;
+        else return true;
+    }
+    public static float getComsuptionByUser(String user_id){
+    	con = DbPool.getConnection();
+        String strSql = "SELECT consumption from card_message  where card_number=(select card_number from user_message where user_id=?);";
+      
+        try
+        {
+            ps = con.prepareStatement(strSql);
+            ps.setString(1,user_id);
+            rs = ps.executeQuery();
+			if(rs.next()){
+				String s=rs.getString("consumption");
+				return Float.parseFloat(s);
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+    	return 0;
+    }
 }

@@ -20,8 +20,7 @@
 						<% if(userBean!=null && userBean.userType.equals("管理员")){ %>
 						<li class="divider"><li>
 						<li><a href="userManage.jsp">用户管理</a></li>
-						<li><a href="cardManage.jsp">挂失管理</a></li>
-						<li><a href="paidManage.jsp">IC卡充值</a></li>
+						<li><a href="cardManage.jsp">IC卡管理</a></li>
 						<% } %>
 						<li class="divider"/>
 						<li>

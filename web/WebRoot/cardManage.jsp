@@ -33,13 +33,13 @@ int curpage;
 if (x==null) curpage=1;
 else curpage=Integer.valueOf(x);
 String sql="";
-if (s==null||c==null||c.equals("")) sql="SELECT * from card_message natural join user_message where status='异常';";
+if (s==null||c==null||c.equals("")) sql="SELECT * from card_message natural join user_message ;";
 else if (s.equals("账户")){
-	sql="SELECT * from card_message natural join user_message where status='异常' and user_name =\""+c+"\";";
+	sql="SELECT * from card_message natural join user_message where user_name =\""+c+"\";";
 }else if (s.equals("用户名称")){
-	sql="SELECT * from card_message natural join user_message where status='异常' and name=\""+c+"\";";
+	sql="SELECT * from card_message natural join user_message where name=\""+c+"\";";
 }else{
-	sql="SELECT * from card_message natural join user_message where status='异常';";
+	sql="SELECT * from card_message natural join user_message;";
 }
 String to ="cardManage.jsp?";
 if (s!=null)to+="select="+s+"&";
@@ -124,7 +124,7 @@ if (c==null) c="";
 									<input id="content" name="content" class="form-control" type="text" placeholder="搜索设备" value="<%=c %>"/>
 									
 									<button class="btn btn-default btn-primary" type="submit">搜索</button>
-									<a class="btn btn-default btn-success" href="newCard.jsp">挂失</a>
+									<a class="btn btn-default btn-success" href="paidManage.jsp">充值</a>
 								</div>
 							</form>
 					</div>
@@ -189,10 +189,10 @@ if (c==null) c="";
 						   <td><c:out value="${row.card_number}"/></td>
 						   <td><c:out value="${row.status}"/></td>
 						   <td>
-							   <a class="btn btn-xs btn-primary" href="#">详情</a>
-						       <button class="btn btn-xs btn-danger" onclick="send_newcard('${row.user_name}')">补卡</button>
-						       
-							</td>
+						      	<c:if test="${row.status =='异常'}">
+						       	 <button class="btn btn-xs btn-danger" onclick="send_newcard('${row.user_name}')">补卡</button>
+						  		</c:if>
+						   </td>
 						</tr>
 					<%} %>
 					</c:forEach>

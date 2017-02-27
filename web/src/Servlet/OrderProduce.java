@@ -47,7 +47,8 @@ public class OrderProduce extends HttpServlet {
 			switch (op) {
 			case "order":
 				CardInfoBean cardinfo=CardHandler.getCardInfoBeanByUser(userBean.userAccount);
-				float m=Float.parseFloat(cardinfo.remaining_sum);
+				float remaining_sum=Float.parseFloat(cardinfo.remaining_sum);
+				float consumption=Float.parseFloat(cardinfo.consumption);
 				String equip_number=request.getParameter("equip_number");
 				String order_date=request.getParameter("order_date");
 				float start_time=Float.valueOf(request.getParameter("start_time"));
@@ -92,7 +93,7 @@ public class OrderProduce extends HttpServlet {
 					response.sendRedirect("equipManage.jsp");
 					return ;
 				}
-				if (!(m>=0&&m>=sum)) {  
+				if (!(remaining_sum>=0&&remaining_sum>=sum)) {  
 					AlertHandle.Alert(session, "预约无效", "卡内余额不足！");
 					response.sendRedirect("equipManage.jsp");
 					return ;
@@ -101,7 +102,7 @@ public class OrderProduce extends HttpServlet {
 					String orderID;
 					if((orderID=EquipHandler.equipOrder(userBean.userID, equip_number, order_date, start_time, end_time))!=null &&
 							CardHandler.addPaidInfo(equipInfoBean,orderID,userBean.userID, -sum) &&
-							CardHandler.setM(userBean.userID,m-sum)){
+							CardHandler.setM(userBean.userID,remaining_sum-sum)&&CardHandler.setC(userBean.userID,consumption+sum)){
 						AlertHandle.AlertSuccess(session, "提示", "设备预约成功！");
 						response.sendRedirect("equipManage.jsp");
 						return ;
@@ -119,6 +120,7 @@ public class OrderProduce extends HttpServlet {
 				}
 			case "disorder":
 				String order_id=request.getParameter("order_id");
+				String user_id=request.getParameter("user_id");
 				if(order_id==null){
 					AlertHandle.AlertDanger(session, "警告", "无效操作！");
 					response.sendRedirect("OrderManage.jsp");
@@ -138,7 +140,11 @@ public class OrderProduce extends HttpServlet {
 				PaidInfoBean paidInfoBean=CardHandler.getPaidInfo(order_id);
 				paidInfoBean.paid_reason="预约金额返还";
 				paidInfoBean.paid_amount=String.valueOf((-Float.valueOf(paidInfoBean.paid_amount)));
-				if(CardHandler.addPaidInfoAndMoney(paidInfoBean)&&EquipHandler.setOrderStatus(order_id, "预约取消")){
+				float consumption1=CardHandler.getComsuptionByUser(user_id);
+				float paid=-Float.parseFloat(paidInfoBean.paid_amount);
+				System.out.println(consumption1+"~"+paid);
+				if(CardHandler.addPaidInfoAndMoney(paidInfoBean)&&EquipHandler.setOrderStatus(order_id, "预约取消")
+						&&CardHandler.setC(user_id, consumption1+paid)){
 					AlertHandle.AlertSuccess(session, "提示", "预约取消成功！");
 					response.sendRedirect("OrderManage.jsp");
 					return ;
