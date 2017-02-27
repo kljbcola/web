@@ -120,7 +120,7 @@ String to ="userCard.jsp?";
 					int cur;
 					
 				 %>
-			    <c:forEach var="row" items="${result.rows}">
+			    <c:forEach var="row" items="${result1.rows}">
 			    	<% Pagenum=Pagenum+1; %>
 			    </c:forEach>
 			    

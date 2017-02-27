@@ -265,6 +265,27 @@ public class EquipHandler {
 	        	
 	        }
     }
+    public static int disOrderByUser(String userid){
+    	int count=0;
+    	con = DbPool.getConnection();
+        String strSql = "update order_record set operation='预约失败' where user_id=?;";
+        try
+        {
+            ps = con.prepareStatement(strSql);
+            ps.setString(1,userid);
+            count = ps.executeUpdate();
+       
+        }catch(Exception e)
+        {
+            e.printStackTrace();
+            System.out.println("delorder出错!");
+            return count;
+        }
+        return count;
+    }
+    
+    
+    
     public static boolean delorder(String id)
     {
         //从数据访问组件中取得连接

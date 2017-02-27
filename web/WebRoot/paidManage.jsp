@@ -97,7 +97,7 @@ if(user==null||!user.userType.equals("管理员")){
             	return false;
             }
             if(confirm("确认提交吗？")){
-		        var temp = document.getElementById("card_info");
+                var temp = document.getElementById("card_info");
 		        temp.submit();
 	        }
         }

@@ -121,18 +121,18 @@ public class OrderProduce extends HttpServlet {
 				String order_id=request.getParameter("order_id");
 				if(order_id==null){
 					AlertHandle.AlertDanger(session, "警告", "无效操作！");
-					response.sendRedirect("equipManage.jsp");
+					response.sendRedirect("OrderManage.jsp");
 					return ;
 				}
 				OrderInfo orderInfo=EquipHandler.getOrderInfo(order_id);
 				if(!orderInfo.user_id.equals(userBean.userID)&&!userBean.userType.equals("管理员")){
 					AlertHandle.AlertDanger(session, "警告", "权限不足！");
-					response.sendRedirect("equipManage.jsp");
+					response.sendRedirect("OrderManage.jsp");
 					return ;
 				}
 				if(!orderInfo.operation.equals("预约处理中")&&!orderInfo.operation.equals("预约已生效")){
 					AlertHandle.AlertDanger(session, "警告", "无法取消该预约！");
-					response.sendRedirect("equipManage.jsp");
+					response.sendRedirect("OrderManage.jsp");
 					return ;
 				}
 				PaidInfoBean paidInfoBean=CardHandler.getPaidInfo(order_id);
@@ -140,7 +140,7 @@ public class OrderProduce extends HttpServlet {
 				paidInfoBean.paid_amount=String.valueOf((-Float.valueOf(paidInfoBean.paid_amount)));
 				if(CardHandler.addPaidInfoAndMoney(paidInfoBean)&&EquipHandler.setOrderStatus(order_id, "预约取消")){
 					AlertHandle.AlertSuccess(session, "提示", "预约取消成功！");
-					response.sendRedirect("equipManage.jsp");
+					response.sendRedirect("OrderManage.jsp");
 					return ;
 				}
 				break;
@@ -150,11 +150,11 @@ public class OrderProduce extends HttpServlet {
 			}
 			
 		} catch (NullPointerException e) {
-			response.sendRedirect("equipManage.jsp");
+			response.sendRedirect("index.jsp");
 			e.printStackTrace();
 		}
 		catch (Exception e) {
-			response.sendRedirect("equipManage.jsp");
+			response.sendRedirect("index.jsp");
 			e.printStackTrace();
 		}
 		

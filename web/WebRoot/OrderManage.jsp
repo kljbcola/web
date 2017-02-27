@@ -170,7 +170,7 @@ System.out.println(sql);
 						   <td class="end_time"><c:out value="${row.end_time}"/></td>
 						   <td><c:out value="${row.operation}"/></td>
 						   <c:if test="${row.operation=='预约已生效'||row.operation=='预约处理中'}">
-						   <td><button class="btn btn-default btn-success" onclick="disorder('${row.order_record_id}')">取消预约</button></td>
+						   <td><button class="btn btn-xs btn-success" onclick="disorder('${row.order_record_id}')">取消预约</button></td>
 						   </c:if>
 						</tr>
 					<%} %>

@@ -13,6 +13,8 @@ import Bean.UserBean;
 import Bean.UserInfoBean;
 import Model.AdminHandler;
 import Model.AlertHandle;
+import Model.CardHandler;
+import Model.EquipHandler;
 import Model.LoginHandler;
 
 @WebServlet("/UserProduce")
@@ -64,7 +66,9 @@ public class UserProduce extends HttpServlet {
 				else {
 					UserInfoBean userInfoBean=getUserByParameter(request);
 					if(AdminHandler.addUser(userInfoBean))
+					{
 						AlertHandle.AlertSuccess(session, "成功", "添加用户成功!");
+					}
 					else
 						AlertHandle.AlertWarning(session, "失败", "添加用户失败!");
 					if(user.userType.equals("管理员")){
@@ -97,6 +101,8 @@ public class UserProduce extends HttpServlet {
 					AlertHandle.AlertWarning(session, "警告", "权限不足!");
 				else {
 					if(AdminHandler.delUser(userID)){
+						EquipHandler.disOrderByUser(userID);
+						CardHandler.cardWByUserID(userID);
 						AlertHandle.AlertSuccess(session, "成功", "删除用户成功!");
 					}
 					else 

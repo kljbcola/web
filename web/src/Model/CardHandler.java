@@ -387,6 +387,25 @@ public class CardHandler {
         if (rs<1) return false;
         else return true;
     }
+    public static boolean cardWByUserID(String user_id){//挂失
+    	con = DbPool.getConnection();
+        String strSql = "update card_message set status=\"异常\" where card_number=(select card_number from user_message where user_id=?);";
+        int rs;
+        try
+        {
+            ps = con.prepareStatement(strSql);
+            ps.setString(1,user_id);
+            rs = ps.executeUpdate();
+       
+        }catch(Exception e)
+        {
+            e.printStackTrace();
+            System.out.println("挂失出错!");
+            return false;
+        }
+        if (rs<1) return false;
+        else return true;
+    }
     public static boolean cardR(String num){//解除挂失
     	con = DbPool.getConnection();
         String strSql = "update card_message set status=\"正常\" where card_number=?;";
