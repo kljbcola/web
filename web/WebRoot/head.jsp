@@ -21,6 +21,7 @@
 						<li class="divider"><li>
 						<li><a href="userManage.jsp">用户管理</a></li>
 						<li><a href="cardManage.jsp">IC卡管理</a></li>
+						<li><a href="financeManage.jsp">财务统计</a></li>
 						<% } %>
 						<li class="divider"/>
 						<li>

@@ -1,12 +1,11 @@
 <%@page import="Model.CardHandler"%>
 <%@page import="Bean.CardInfoBean"%>
 <%@page import="Bean.UserInfoBean"%>
+<%@page import="Bean.UserBean"%>
 <%@page import="Model.AlertHandle"%>
-<%@ page import="java.io.*,java.util.*" %>
-<%@ page import="javax.servlet.*,java.text.*" %>
-<%@ page language="java" 
-import="java.util.*,Bean.UserBean,Model.AdminHandler" 
-pageEncoding="UTF-8"%>
+<%@page import="java.text.DateFormat"%>
+<%@page import="java.text.SimpleDateFormat"%>
+<%@page import="java.util.Date"%>
 <%
 String path = request.getContextPath();
 String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
