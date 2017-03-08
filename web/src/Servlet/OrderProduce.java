@@ -1,6 +1,9 @@
 package Servlet;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -85,6 +88,17 @@ public class OrderProduce extends HttpServlet {
 					response.sendRedirect("equipManage.jsp");
 					return ;
 				}
+				Date nowDate=new Date();
+            	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            	String nowDateStr=sdf.format(nowDate);
+            	float nowTime=(float) (Calendar.getInstance().get(Calendar.HOUR_OF_DAY)+(Calendar.getInstance().get(Calendar.MINUTE)/60.0)+1);
+				if(nowDateStr.equals(order_date)&&nowTime>=start_time){
+					AlertHandle.AlertDanger(session, "警告", "请至少提前一小时预约！");
+					response.sendRedirect("OrderManage.jsp");
+					return;
+				}
+				
+				
 				if(CheckHandler.checkOrderDate(equip_number, order_date, start_time, end_time)){
 					String orderID;
 					if((orderID=EquipHandler.equipOrder(userBean.userID, equip_number, order_date, start_time, end_time))!=null &&

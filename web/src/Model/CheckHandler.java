@@ -3,6 +3,10 @@ package Model;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
 import Data.DbPool;
 
 public class CheckHandler {
@@ -81,8 +85,19 @@ public class CheckHandler {
         {
             ps = con.prepareStatement(strSql);
             rs = ps.executeQuery();
+            Date nowDate=new Date();
+        	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        	String nowDateStr=sdf.format(nowDate);
+        	float nowTime=(float) (Calendar.getInstance().get(Calendar.HOUR_OF_DAY)+(Calendar.getInstance().get(Calendar.MINUTE)/60.0)+0.75);
+            if(nowDateStr.equals(date)){
+				result+="0,"+nowTime+",2;";
+			}
             while(rs.next())
             {    
+            	
+            	float endt=Float.valueOf(rs.getString(3));
+            	if (nowDateStr.equals(date)&&nowTime>endt) 
+						continue;
             	String op=rs.getString(1);
             	result+=rs.getString(2)+',';
             	result+=rs.getString(3)+',';
