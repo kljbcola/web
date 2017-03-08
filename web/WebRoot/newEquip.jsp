@@ -205,14 +205,6 @@ int row=3;
 									<label for="min_time">最少使用时间</label>
 									<input class="form-control" id="min_time" name="min_time" type="text"  />
 									
-									<label for="open_hours">开始时间</label>
-									<div class='input-group date'>
-						                <input id='open_hours' type='text' name="open_hours" class="form-control" />
-						                <span class="input-group-addon">
-						                     <span class="glyphicon glyphicon-calendar"></span>
-						                </span>
-					            	</div>
-									
 									<label for="equip_status">设备状态*</label>
 									<select id="equip_status" name="equip_status" class="selectpicker show-tick form-control" >
 										<option>开放</option>
@@ -263,14 +255,6 @@ int row=3;
 								
 								<label for="max_time">最多使用时间</label>
 								<input class="form-control" id="max_time" name="max_time" type="text"/>
-							
-								<label for="close_hours">截止时间</label>
-								<div class='input-group date'>
-				                <input id='close_hours' type='text' name="close_hours" class="form-control" />
-				                <span class="input-group-addon">
-				                     <span class="glyphicon glyphicon-calendar"></span>
-				                </span>
-				            	</div>
 								
 								<label for="equip_permission">设备权限*</label>
 								<select id="equip_permission" name="equip_permission" class="selectpicker show-tick form-control" >

@@ -46,7 +46,6 @@ if (c==null) c="";
     <base href="<%=basePath%>">
      <meta charset="UTF-8"/>
 	<title>设备管理</title>
-	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scaequiple=no">
 	<script src="js/jquery.min.js"></script>
 	<link href="css/bootstrap.min.css" rel="stylesheet">
 	<script src="js/bootstrap.min.js"></script>
@@ -190,6 +189,7 @@ if (c==null) c="";
 						   <a class="btn btn-xs btn-primary" href="equipDisplay.jsp?equip_number=${row.equip_number}">详情</a>
 						   <%if(userBean!=null && userBean.userType.equals("管理员")) { %>
 					              <a class="btn btn-xs btn-info" href="equipInfo.jsp?equip_number=${row.equip_number}">修改</a>
+					              <a class="btn btn-xs btn-warning" href="adminOrder.jsp?equip_number=${row.equip_number}">开放时间</a>
 					              <button class="btn btn-xs btn-danger" onclick="del_equipmessage('${row.equip_number}')">删除</button>
 					      	<%}else { %>	
 					           		<a class="btn btn-xs btn-info" href="equipOrder.jsp?equip_number=${row.equip_number}">预约</a>

@@ -74,17 +74,58 @@ public class CheckHandler {
     	String result="";
         //从数据访问组件中取得连接
         con = DbPool.getConnection();
-        String strSql = "select operation,start_time,end_time from order_record where equip_number="+equipID+" and order_date='"+date+"';";
+        String strSql = "select operation,start_time,end_time,order_date from order_record where equip_number="+equipID+
+        		" and (order_date='"+date+"' or (order_date='0000-00-00' and operation='不可用')) order by start_time;";
+        System.out.println(strSql);
         try
         {
             ps = con.prepareStatement(strSql);
             rs = ps.executeQuery();
             while(rs.next())
             {    
-                if(!rs.getString("operation").equals("预约失败")){
-	            	result+=rs.getString("start_time")+',';
-	            	result+=rs.getString("end_time")+';';
+            	String op=rs.getString(1);
+            	result+=rs.getString(2)+',';
+            	result+=rs.getString(3)+',';
+            	String order_date=rs.getString(4);
+                if(op.equals("预约处理中")||op.equals("预约已生效")){
+	            	result+="2;";
                 }
+                else {
+                	if(op.equals("不可用")&&order_date!=null){
+		            	result+="1;";
+	                }
+                	else {
+						result+="0;";
+					}
+                }
+            }
+            System.out.println(result);
+            //释放资源
+            DbPool.DBClose(con, ps, rs);      
+        }catch(Exception e)
+        {
+            e.printStackTrace();
+            System.out.println("查询出错!");
+            return result;
+        }
+        return result;
+    }
+    public static String getNoUseOrderMessage(String equipID)
+    {
+    	String result="";
+        //从数据访问组件中取得连接
+        con = DbPool.getConnection();
+        String strSql = "select operation,start_time,end_time from order_record where equip_number="+equipID+
+        		" and order_date='0000-00-00' and operation='不可用' order by start_time;";
+        try
+        {
+            ps = con.prepareStatement(strSql);
+            rs = ps.executeQuery();
+            while(rs.next())
+            {    
+            	result+=rs.getString("start_time")+',';
+            	result+=rs.getString("end_time")+',';
+            	result+="1;";
             }
             //释放资源
             DbPool.DBClose(con, ps, rs);      

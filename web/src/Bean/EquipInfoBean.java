@@ -20,8 +20,6 @@ public class EquipInfoBean {
 	public String min_time=null;        	//最少使用时间
 	public String max_time=null;        	//最多使用时间
 	public String equip_status=null;     	//设备状态
-	public String open_hours=null;      	//开始时间
-	public String close_hours=null;      	//截止时间
 	public String equip_permission=null;    //设备权限
 	public String equip_ip=null;          	//设备终端IP地址
 }

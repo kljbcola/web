@@ -50,11 +50,18 @@ public class FastQuery extends HttpServlet {
 				if(equipid!=null){
 					String result=CheckHandler.getOrderMessage(equipid, query);
 					writer.print(result);
-					System.out.println("order_date");
-					System.out.println(result);
 				}
 				break;
 			}
+		case "no_use_order":
+		{
+			String equipid=request.getParameter("equipid");
+			if(equipid!=null){
+				String result=CheckHandler.getNoUseOrderMessage(equipid);
+				writer.print(result);
+			}
+			break;
+		}
 		case "equip":
 			query=request.getParameter("equipid");
 			if(CheckHandler.checkEquipID(query))

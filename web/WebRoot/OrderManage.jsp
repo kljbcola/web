@@ -27,9 +27,9 @@ if(user==null){
 }
 String sql;
 if(user.userType.equals("管理员"))
-	sql="SELECT * from order_record natural join equip_message;";
+	sql="SELECT * from order_record natural join equip_message where operation!='不可用' order by order_record_id;";
 else
-	sql="SELECT * from order_record natural join equip_message where user_id=\""+user.userID+"\";";
+	sql="SELECT * from order_record natural join equip_message where user_id=\""+user.userID+"\" order by order_record_id;";
 System.out.println(sql);
 %>
 <!doctype html>

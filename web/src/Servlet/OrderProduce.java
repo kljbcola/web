@@ -29,16 +29,11 @@ public class OrderProduce extends HttpServlet {
 			throws ServletException, IOException {
 		doPost(request, response);
 	}
-	private float getFloatTime(String time) {
-		String[] t=time.split(":");
-		float result=Float.valueOf(t[0])+(Float.valueOf(t[1])/60);
-		return result;
-		
-	}
 	public void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html;charset=utf-8");
 		try {
 			HttpSession session=request.getSession(false);
 			UserBean userBean=UserBean.checkSession(session);
@@ -64,7 +59,7 @@ public class OrderProduce extends HttpServlet {
 				
 				if(equipInfoBean.equip_permission.equals("关闭"))
 				{
-					AlertHandle.Alert(session, "预约无效", "设备已停止预约！");
+					AlertHandle.AlertDanger(session, "预约无效", "设备已停止预约！");
 					response.sendRedirect("equipManage.jsp");
 					return ;
 				}
@@ -73,28 +68,20 @@ public class OrderProduce extends HttpServlet {
 					response.sendRedirect("equipManage.jsp");
 					return ;
 				}
-				if (equipInfoBean.open_hours==""||equipInfoBean.open_hours==null)equipInfoBean.open_hours="0:0";
-				if (equipInfoBean.close_hours==""||equipInfoBean.close_hours==null)equipInfoBean.close_hours="24:0";
-				if (start_time<getFloatTime(equipInfoBean.open_hours)||end_time>getFloatTime(equipInfoBean.close_hours)) {
-					AlertHandle.Alert(session, "预约无效", "超出设备可预约时间段！");
-					response.sendRedirect("equipManage.jsp");
-					return ;
-				}
-				
 				if (!equipInfoBean.max_time.equals("")&&
 						end_time-start_time>Float.valueOf(equipInfoBean.max_time)) {
-					AlertHandle.Alert(session, "预约无效", "超出设备最长预约时间！");
+					AlertHandle.AlertDanger(session, "预约无效", "超出设备最长预约时间！");
 					response.sendRedirect("equipManage.jsp");
 					return ;
 				}
 				if (end_time-start_time==0||!equipInfoBean.min_time.equals("")&&
 						end_time-start_time<Float.valueOf(equipInfoBean.min_time)) {
-					AlertHandle.Alert(session, "预约无效", "预约时间不足！");
+					AlertHandle.AlertDanger(session, "预约无效", "预约时间不足！");
 					response.sendRedirect("equipManage.jsp");
 					return ;
 				}
 				if (!(remaining_sum>=0&&remaining_sum>=sum)) {  
-					AlertHandle.Alert(session, "预约无效", "卡内余额不足！");
+					AlertHandle.AlertDanger(session, "预约无效", "卡内余额不足！");
 					response.sendRedirect("equipManage.jsp");
 					return ;
 				}
@@ -120,7 +107,6 @@ public class OrderProduce extends HttpServlet {
 				}
 			case "disorder":
 				String order_id=request.getParameter("order_id");
-				String user_id=request.getParameter("user_id");
 				if(order_id==null){
 					AlertHandle.AlertDanger(session, "警告", "无效操作！");
 					response.sendRedirect("OrderManage.jsp");
@@ -140,15 +126,38 @@ public class OrderProduce extends HttpServlet {
 				PaidInfoBean paidInfoBean=CardHandler.getPaidInfo(order_id);
 				paidInfoBean.paid_reason="预约金额返还";
 				paidInfoBean.paid_amount=String.valueOf((-Float.valueOf(paidInfoBean.paid_amount)));
-				float consumption1=CardHandler.getComsuptionByUser(user_id);
+				float consumption1=CardHandler.getComsuptionByUser(orderInfo.user_id);
 				float paid=-Float.parseFloat(paidInfoBean.paid_amount);
 				System.out.println(consumption1+"~"+paid);
 				if(CardHandler.addPaidInfoAndMoney(paidInfoBean)&&EquipHandler.setOrderStatus(order_id, "预约取消")
-						&&CardHandler.setC(user_id, consumption1+paid)){
+						&&CardHandler.setC(orderInfo.user_id, consumption1+paid)){
 					AlertHandle.AlertSuccess(session, "提示", "预约取消成功！");
 					response.sendRedirect("OrderManage.jsp");
 					return ;
 				}
+				
+				break;
+			case "no_use_order":
+				if(!userBean.userType.equals("管理员")){
+					AlertHandle.AlertDanger(session, "警告", "权限不足！");
+					response.sendRedirect("OrderManage.jsp");
+					return ;
+				}
+				order_date=request.getParameter("order_date");
+				equip_number=request.getParameter("equip_number");
+				String range=request.getParameter("range");
+				EquipHandler.clearAdminOrder(equip_number, order_date);
+				if(range!=null&&!range.equals("")){
+					String arr[]=range.split(";");
+					for (int i = 0; i < arr.length; i++) {
+						String num[]=arr[i].split(",");
+						float start=Float.valueOf(num[0]);
+						float end=Float.valueOf(num[1]);
+						EquipHandler.equipOrderNouse(userBean.userID, equip_number, order_date, start, end);
+					}
+				}
+				AlertHandle.AlertSuccess(session, "提示", "设置成功！");
+				response.sendRedirect("adminOrder.jsp?equip_number="+equip_number);
 				break;
 			default:
 				AlertHandle.AlertDanger(session, "警告", "无效操作！");

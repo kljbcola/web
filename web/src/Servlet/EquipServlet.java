@@ -49,8 +49,6 @@ public class EquipServlet extends HttpServlet {
 		equipInfoBean.min_time				=request.getParameter("min_time");
 		equipInfoBean.max_time				=request.getParameter("max_time");
 		equipInfoBean.equip_status			=request.getParameter("equip_status");
-		equipInfoBean.open_hours			=request.getParameter("open_hours");
-		equipInfoBean.close_hours			=request.getParameter("close_hours");
 		equipInfoBean.equip_permission		=request.getParameter("equip_permission");
 		equipInfoBean.equip_ip				=request.getParameter("equip_ip");
 		return equipInfoBean;

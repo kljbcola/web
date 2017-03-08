@@ -9,7 +9,7 @@ public class DbPool {
 
     private static DbPool instance = null;
     private static String dBDriver = "com.mysql.jdbc.Driver";
-    private static String connectionUrl = "jdbc:mysql://localhost:3306/db?useUnicode=true&characterEncoding=UTF-8&useSSL=false";
+    private static String connectionUrl = "jdbc:mysql://localhost:3306/db?useUnicode=true&characterEncoding=UTF-8&useSSL=false&zeroDateTimeBehavior=convertToNull";
     private static String user = "datauser";
     private static String password = "135798";
     public static String getConnectionUrl() {

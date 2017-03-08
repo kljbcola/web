@@ -23,16 +23,8 @@ if(equipinfo==null)
 	return ;
 }
 UserBean userBean=UserBean.checkSession(session);
-if(userBean==null){
-	AlertHandle.AlertWarning(session, "警告", "请登录！");
-	response.sendRedirect("index.jsp");
-	return ;
-}
-System.out.println(userBean.userName);
-CardInfoBean cardinfo=CardHandler.getCardInfoBeanByUser(userBean.userAccount);
-if (cardinfo==null)
-{
-	AlertHandle.AlertWarning(session, "警告", "没有找到可以使用的IC卡！");
+if(userBean==null||!userBean.userType.equals("管理员")){
+	AlertHandle.AlertWarning(session, "警告", "权限不足！");
 	response.sendRedirect("index.jsp");
 	return ;
 }
@@ -96,28 +88,14 @@ if (cardinfo==null)
 	<script type="text/javascript">
 	var order_start_time=0;
 	var order_end_time=0;
-	var OrderDate;
-	var minTime=<%=equipinfo.min_time.equals("")?0:equipinfo.min_time %>;
-	var maxTime=<%=equipinfo.max_time.equals("")?24:equipinfo.max_time %>;
-	var forbid_range=new Array();
-	var v=<%=equipinfo.price %>;
-	var m=<%=cardinfo.remaining_sum %>;
+	var OrderDate="0000-00-00";
 	var forbid_range=new Array();
 	function checkTime(t1,t2){
-		if(t2-t1<=0||t2-t1<minTime||t2-t1>maxTime)return false;
+		if(t2-t1<=0)return false;
 			for(var i=0;i<forbid_range.length;i++)
 				if(!(t1>=forbid_range[i].end||t2<=forbid_range[i].start))
 					return false;
 		return true;
-	}
-	function getOrderMoney(){
-		var price=<%=equipinfo.price %>;
-		return (order_end_time-order_start_time)*price;
-	}
-	function checkM(){  //price, money
-		var sum=v*(order_end_time-order_start_time);
-		if (m>=0 && m>=sum/2) return true;
-		return false;
 	}
 	 function updateForbid(str){
 		forbid_range=new Array();
@@ -136,8 +114,22 @@ if (cardinfo==null)
 			}
 		}
 	}
+	function getFrobidStr(){
+		var str="";
+		if($("#type_sel").val()==1)
+		for (var i = 0; i <forbid_range.length; i++) {
+				str+=forbid_range[i].start+","+forbid_range[i].end+";";
+			}
+		else{
+			for (var i = 0; i <forbid_range.length; i++) {
+			if(forbid_range[i].type==1)
+				str+=forbid_range[i].start+","+forbid_range[i].end+";";
+			}
+		}
+		return str;
+	}
 	function getbar(type,width){
-		if(type<=1)
+		if(type==1||type==0)
 			return "<div class=\"progress-bar progress-bar-none\" role=\"progressbar\" style=\"width:" +width+"%;\"> </div>";
 		else if(type==2)
 			return "<div class=\"progress-bar progress-bar-ordered\" role=\"progressbar\" style=\"width:" +width+"%;\"> </div>";
@@ -145,6 +137,10 @@ if (cardinfo==null)
 			return "<div class=\"progress-bar progress-bar-use\" role=\"progressbar\" style=\"width:" +width+"%;\"> </div>";
 	}
 	function updateProgress(){
+		var range=new Array();
+		for(var i=0;i<forbid_range.length;i++){
+			range.push({"start":forbid_range[i].start,"end":forbid_range[i].end,"type":forbid_range[i].type});
+		}
 		var progress=[ document.getElementById("progress01"),
 						document.getElementById("progress02"),
 						document.getElementById("progress03"),
@@ -155,33 +151,33 @@ if (cardinfo==null)
 		var last=0.0;
 		var end_time=6;
 		var str="";
-		for(var i=0;i<forbid_range.length;i++)
+		for(var i=0;i<range.length;i++)
 		{
 			var width;
-			if(forbid_range[i].start<last)forbid_range[i].start=last;
-			if(forbid_range[i].end>24)forbid_range[i].end=24;
-			if(last<forbid_range[i].start&&forbid_range[i].start<end_time){
-				width=(forbid_range[i].start-last)/6.0*100;
+			if(range[i].start<last)range[i].start=last;
+			if(range[i].end>24)range[i].end=24;
+			if(last<range[i].start&&range[i].start<end_time){
+				width=(range[i].start-last)/6.0*100;
 				str=getbar(3,width);
 				progress[count].innerHTML+=str;
-				last=forbid_range[i].start;
+				last=range[i].start;
 			}
-			if(forbid_range[i].end<end_time){
-				width=(forbid_range[i].end-forbid_range[i].start)/6.0*100;
-				str=getbar(forbid_range[i].type,width);
+			if(range[i].end<end_time){
+				width=(range[i].end-range[i].start)/6.0*100;
+				str=getbar(range[i].type,width);
 				progress[count].innerHTML+=str;
-				last=forbid_range[i].end;
-			}else if(forbid_range[i].end==end_time)
+				last=range[i].end;
+			}else if(range[i].end==end_time)
 			{
-				width=(forbid_range[i].end-forbid_range[i].start)/6.0*100;
-				str=getbar(forbid_range[i].type,width);
+				width=(range[i].end-range[i].start)/6.0*100;
+				str=getbar(range[i].type,width);
 				progress[count].innerHTML+=str;
 				count++;
-				last=forbid_range[i].end;
+				last=range[i].end;
 				end_time+=6;
 			}else
 			{
-				if(forbid_range[i].start>=end_time){
+				if(range[i].start>=end_time){
 					width=(end_time-last)/6.0*100;
 					str=getbar(3,width);
 					progress[count].innerHTML+=str;
@@ -191,9 +187,9 @@ if (cardinfo==null)
 
 				}
 				else{
-					width=(end_time-forbid_range[i].start)/6.0*100;
-					str=getbar(forbid_range[i].type,width);
-					forbid_range[i].start=end_time;
+					width=(end_time-range[i].start)/6.0*100;
+					str=getbar(range[i].type,width);
+					range[i].start=end_time;
 					progress[count].innerHTML+=str;
 					i--;count++;
 					last=end_time;
@@ -226,27 +222,10 @@ if (cardinfo==null)
 		h=parseInt($("#end_hour").val());
 		m=parseInt($("#end_minute").val());
 		order_end_time=h+(m/60.0);
+		if(order_end_time>24)order_end_time=24;
 	}
-<% if(equipinfo.equip_status.equals("开放")){ %>
-	function orderSubmit(){
-		if (!checkM()) {alert("余额不足");return;}
-		<%if(userBean.userType.equals("校外用户")&&equipinfo.equip_permission.equals("校内用户")){%>
-			alert("权限不足!");
-		 <% }
-			else
-			{%>
-				updateTime();
-				if(!checkTime(order_start_time,order_end_time))alert("所选时间无效！");
-				else
-				if(confirm("确认要预约吗？\n预约日期："+OrderDate+"\n预约时间："+
-					float2time(order_start_time)+"--"+float2time(order_end_time)
-					+"\n所需总金额"+getOrderMoney()
-					+"\n预支付金额:"+getOrderMoney()/2))
-					post('OrderProduce', {equip_number:<%=equipnum%>,op:'order',order_date:OrderDate,start_time:order_start_time,end_time:order_end_time});
-				
-			<%} %>
-	}
-<%}%>
+
+	
 	function refreshDate(e){
 		OrderDate=e;
         var xmlhttp;
@@ -270,8 +249,59 @@ if (cardinfo==null)
 				updateProgress();
 			}
 		}
-		xmlhttp.open("GET","FastQuery?op=order&order_date="+OrderDate+"&equipid="+<%=equipnum%>,true);
+		if($("#type_sel").val()==1)
+			xmlhttp.open("GET","FastQuery?op=no_use_order&equipid="+<%=equipnum%>,true);
+		else
+			xmlhttp.open("GET","FastQuery?op=order&order_date="+OrderDate+"&equipid="+<%=equipnum%>,true);
 		xmlhttp.send();
+	}
+	function type_change(){
+		if($("#type_sel").val()==1)	{
+			$('#order_date').hide();
+			refreshDate("0000-00-00");
+		}
+		else{
+			$('#order_date').show();
+			refreshDate(moment().format('YYYY-MM-DD'));
+		}
+	}
+	function sortNumber(a, b)
+	{
+		return a.start - b.start;
+	}
+	function orderAdd(){
+		updateTime();
+		if(!checkTime(order_start_time,order_end_time))alert("所选时间无效！");
+		else
+		{
+		if($("#type_sel").val()==1)	
+			forbid_range.push({"start":order_start_time,"end":order_end_time,"type":0});
+		else
+			forbid_range.push({"start":order_start_time,"end":order_end_time,"type":1});
+			forbid_range.sort(sortNumber);
+			updateProgress();
+		}
+	}
+	function orderClear(){
+		if($("#type_sel").val()==1)	{
+			forbid_range=new Array();
+		}
+		else
+		{
+			for(var i=0;i<forbid_range.length;i++)
+				if(forbid_range[i].type==1)
+					forbid_range.splice(i--,1);
+		}
+		updateProgress();
+		
+	}
+	function orderSubmit(){
+		 if($("#type_sel").val()==1)	{
+		 	post('OrderProduce', {equip_number:<%=equipnum%>,op:'no_use_order',order_date:'0000-00-00',range:getFrobidStr()});
+		 }
+		 else{
+			post('OrderProduce', {equip_number:<%=equipnum%>,op:'no_use_order',order_date:OrderDate,range:getFrobidStr()});
+		 }
 	}
 	function post(URL, PARAMS) {
 	  var temp = document.createElement("form");
@@ -296,7 +326,7 @@ if (cardinfo==null)
 				minDate:moment(),
                 locale: 'zh-CN',
                 format: 'YYYY-MM-DD'});
-        
+        $('#order_date').hide();
         $('#order_date').on("dp.change",function(e){refreshDate(e.date.format('YYYY-MM-DD'));});
         refreshDate(moment().format('YYYY-MM-DD'));
 	});
@@ -313,36 +343,11 @@ if (cardinfo==null)
 							 <%=equipinfo.equip_name %><small>设备编号：<%=equipinfo.equip_number %></small>
 						</h1>
 					</div>
-					<div class="row clearfix">
-						<div class="col-md-4 col-xs-4">
-							<img class="img-rounded" alt="140x140" src="http://ibootstrap-file.b0.upaiyun.com/lorempixel.com/140/140/default.jpg" />
-						</div>
-						<div class="col-md-4 col-xs-4">
-							<dl>
-								<dt>设备型号:</dt>
-								<dd>
-									<%=equipinfo.equip_model %>
-								</dd>
-								<dt>当前状态:</dt>
-								<dd>
-									<%=equipinfo.equip_status %>
-								</dd>
-								<dt>负责人:</dt>
-								<dd>
-									<%=equipinfo.owner %>
-								</dd>
-								<dt>联系电话:</dt>
-								<dd>
-									<%=equipinfo.phone %>
-								</dd>
-								<dt>电子邮件:</dt>
-								<dd>
-									<%=equipinfo.Email %>
-								</dd>
-								
-							</dl>
-						</div>
-					</div>
+					<label>设置类型</label>
+					<select id="type_sel" onchange="type_change()" class="selectpicker">
+						<option value="1">每天</option>
+						<option value="2">指定日期</option>
+					</select>
 					<div class="navbar-header">
 							<div class="col-md-12 col-xs-12 " style="min-width:500px">
 							<div class="col-md-12 col-xs-12" >
@@ -351,8 +356,6 @@ if (cardinfo==null)
 								<label>设备型号：<%=equipinfo.equip_model %></label><br>
 								<label>最短预约时间：<%=equipinfo.min_time.equals("")?"-":equipinfo.min_time %></label><br>
 								<label>实验室地址：<%=equipinfo.lab_location %></label><br>
-								<label>卡内余额:<%=cardinfo.remaining_sum %></label>
-								
 							</div>
 							<div class="col-md-6 col-xs-6">
 								<label>设备编号：<%=equipinfo.equip_number %></label><br>
@@ -365,7 +368,6 @@ if (cardinfo==null)
 							<div class="col-md-12 col-xs-12">
 							<label for="order_date">请选择预约日期</label>
 							<div id="order_date"></div>
-							
 							<table  class="col-md-12 col-xs-12">
 								<tr>
 									<td colspan="2">
@@ -594,6 +596,7 @@ if (cardinfo==null)
 												<option>21</option>
 												<option>22</option>
 												<option>23</option>
+												<option>24</option>
 											</select>
 											<label>时</label>
 											<select id="end_minute" name="end_minute" class="selectpicker col-xs-4 col-md-4">
@@ -605,19 +608,24 @@ if (cardinfo==null)
 											<label>分</label>
 											</div>
 										</td>
-								</tr>	
+								</tr>
 								<tr>
-								<td colspan="2">
-								<div style="float: right;">
-												<% if(equipinfo.equip_status.equals("关闭")){ %>
-													<label>该设备不可预约</label>
-											 	<%}else { %>
-											 		<button class="btn btn-primary" onclick="orderSubmit()">提交</button>
-												<%} %>
+									<td colspan="2">
+										<div style="float: right;">
+											<% if(equipinfo.equip_status.equals("关闭")){ %>
+												<label>该设备不可预约</label>
+											<%}else { %>
+												<button class="btn btn-danger" onclick="orderClear()">重置</button>
+												<button class="btn btn-info" onclick="orderAdd()">添加</button>
+												<button class="btn btn-primary" onclick="orderSubmit()">保存</button>
+											<%} %>
 										</div>
-								</td></tr>
+									</td>
+								</tr>
 							</table>
-						</div>
+							</div>
+							
+							
 					</div>
 				</div>
 			</div>

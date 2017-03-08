@@ -81,8 +81,6 @@ public class EquipHandler {
 	            	equipInfoBean.min_time=clearNullString(rs.getString("min_time"));
 	            	equipInfoBean.max_time=clearNullString(rs.getString("max_time"));
 	            	equipInfoBean.equip_status=clearNullString(rs.getString("equip_status"));
-	            	equipInfoBean.open_hours=clearNullString(rs.getString("open_hours"));
-	            	equipInfoBean.close_hours=clearNullString(rs.getString("close_hours"));
 	            	equipInfoBean.equip_permission=clearNullString(rs.getString("equip_permission"));
 	             	equipInfoBean.equip_ip=clearNullString(rs.getString("equip_ip"));
 	                //释放资源
@@ -124,8 +122,6 @@ public class EquipHandler {
 	        		+ ", min_time= " 			+ setValue(equipInfoBean.min_time)
 	        		+ ", max_time= " 			+ setValue(equipInfoBean.max_time)
 	        		+ ", equip_status= " 		+ setValue(equipInfoBean.equip_status)
-	        		+ ", open_hours= " 			+ setValue(equipInfoBean.open_hours)
-	        		+ ", close_hours= " 		+ setValue(equipInfoBean.close_hours)
 	        		+ ", equip_permission= " 	+ setValue(equipInfoBean.equip_permission)
 	        		+ ", equip_ip= " 			+ setValue(equipInfoBean.equip_ip)
 	        		+ " where equip_number=" 	+ setValue(equipInfoBean.equip_number)
@@ -174,8 +170,6 @@ public class EquipHandler {
 	        		+ ", " 		+ setValue(equipInfoBean.min_time)
 	        		+ ", " 		+ setValue(equipInfoBean.max_time)
 	        		+ ", " 		+ setValue(equipInfoBean.equip_status)
-	        		+ ", " 		+ setValue(equipInfoBean.open_hours)
-	        		+ ", " 		+ setValue(equipInfoBean.close_hours)
 	        		+ ", " 		+ setValue(equipInfoBean.equip_permission)
 	        		+ ",  " 	+ setValue(equipInfoBean.equip_ip) +");";
 	        try
@@ -214,6 +208,38 @@ public class EquipHandler {
         }
         if (rs<1) return false;
         else return true;
+    }
+    public static boolean equipOrderNouse(String userID,String equipID,String date,float start_time,float end_time)
+    {
+    	con = DbPool.getConnection();
+		 int rs;
+	        String strSql = "INSERT INTO order_record "
+	        		+ "(equip_number,user_id,order_date,start_time,end_time,operation) values "+"("
+	        					+ setValue(equipID)
+	        		+ ", " 		+ setValue(userID)
+	        		+ ", "		+ setValue(date)
+	        		+ ", " 		+ start_time
+	        		+ ", " 		+ end_time
+	        		+ ",'不可用');";
+	        try
+	        {
+	            ps = con.prepareStatement(strSql);
+	            System.out.println(strSql);
+	            rs = ps.executeUpdate();
+	            ps.close();
+	        }catch(Exception e)
+	        {
+	            e.printStackTrace();
+	            System.out.println("数据添加出错!");
+	            DbPool.DBClose(con, ps);
+	            return false;
+	        }
+	        if(rs<1){
+	        	return false;
+	        }
+	        else {
+	        	return true;
+	        }
     }
     public static String equipOrder(String userID,String equipID,String date,float start_time,float end_time)
     {
@@ -268,7 +294,7 @@ public class EquipHandler {
     public static int disOrderByUser(String userid){
     	int count=0;
     	con = DbPool.getConnection();
-        String strSql = "update order_record set operation='预约失败' where user_id=?;";
+        String strSql = "update order_record set operation='预约失败',remark='用户已删除' where user_id=? and operation in('预约处理中','预约已生效');";
         try
         {
             ps = con.prepareStatement(strSql);
@@ -298,6 +324,28 @@ public class EquipHandler {
             ps.setString(1,id);
             rs = ps.executeUpdate();
        
+        }catch(Exception e)
+        {
+            e.printStackTrace();
+            System.out.println("delorder出错!");
+            return false;
+        }
+        if (rs<1) return false;
+        else return true;
+    }
+
+    public static boolean clearAdminOrder(String equip_number,String order_date)
+    {
+        //从数据访问组件中取得连接
+        con = DbPool.getConnection();
+        String strSql = "delete from order_record where equip_number=? and order_date=? and operation='不可用';";
+        int rs;
+        try
+        {
+            ps = con.prepareStatement(strSql);
+            ps.setString(1,equip_number);
+            ps.setString(2,order_date);
+            rs = ps.executeUpdate();
         }catch(Exception e)
         {
             e.printStackTrace();
