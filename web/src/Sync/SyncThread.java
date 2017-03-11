@@ -1,16 +1,12 @@
 package Sync;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
-import java.util.Map;
 
 import Bean.OrderInfo;
 import Model.AdminHandler;
@@ -22,15 +18,10 @@ public class SyncThread extends Thread {
 	        while (!this.isInterrupted()) {// 线程未中断执行循环 
 	        	ArrayList<String> equipList=EquipHandler.getEquipNumber();
 	        	for(int i=0;i<equipList.size();i++){
-	        		SyncServlet.equipStatus.remove(equipList.get(i));
-	        		SyncServlet.equipStatus.put(equipList.get(i), new Boolean(syncEquip(equipList.get(i))));
-	        	}
-	        	Iterator iter = SyncServlet.equipStatus.entrySet().iterator();
-	        	while (iter.hasNext()) {
-		        	Map.Entry entry = (Map.Entry) iter.next();
-		        	String key =(String) entry.getKey();
-		        	Boolean val =(Boolean) entry.getValue();
-		        	System.out.println("equipNum:"+ key + "  connect:"+ val.toString());
+	        		if(syncEquip(equipList.get(i)))
+	        			EquipHandler.updateConnectStatus(equipList.get(i), "连接正常");
+	        		else 
+	        			EquipHandler.updateConnectStatus(equipList.get(i), "连接失败");
 	        	}
 	            try {
 	                Thread.sleep(20000);

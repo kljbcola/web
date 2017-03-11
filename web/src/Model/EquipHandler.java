@@ -349,7 +349,44 @@ public class EquipHandler {
         }
         return count;
     }
-    
+    public static boolean updateConnectStatus(String equipNum,String status){
+    	int count=0;
+    	con = DbPool.getConnection();
+        String strSql = "replace into connect_status values(?,?);";
+        try
+        {
+            ps = con.prepareStatement(strSql);
+            ps.setString(1,equipNum);
+            ps.setString(2,status);
+            count = ps.executeUpdate();
+        }catch(Exception e)
+        {
+            e.printStackTrace();
+            System.out.println("updateOrder出错!");
+        }
+        if(count>0)return true;
+        return false;
+    }
+	public static String getConnectStatus(String equipNum)
+    {
+    	con = DbPool.getConnection();
+    	String result=null;
+	    String strSql = "select connect_status from connect_status where equip_number=?;";
+	    try
+	    {
+	         ps = con.prepareStatement(strSql);
+	         ps.setString(1, equipNum);
+	         rs = ps.executeQuery();
+	         if(rs.next()){
+	        	 result=rs.getString(1);
+	         }
+	     }catch(Exception e)
+	     {
+	         e.printStackTrace();
+	         System.out.println("getConnectStatus出错!");
+	     }
+	    return result;
+    }
     public static int updateOrder(String order_record_id,float exp_start_time,float exp_end_time,String operation){
     	int count=0;
     	con = DbPool.getConnection();

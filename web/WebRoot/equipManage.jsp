@@ -23,15 +23,15 @@ int curpage;
 if (x==null) curpage=1;
 else curpage=Integer.valueOf(x);
 String sql="";
-if (s==null||c==null||c.equals("")) sql="SELECT * from equip_message order by equip_number;";
+if (s==null||c==null||c.equals("")) sql="SELECT * from equip_message natural join connect_status order by equip_number;";
 else if (s.equals("设备编号")){
-	sql="SELECT * from equip_message where equip_number =\""+c+"\";";
+	sql="SELECT * from equip_message natural join connect_status where equip_number =\""+c+"\";";
 }else if (s.equals("设备名称")){
-	sql="SELECT * from equip_message where equip_name =\""+c+"\";";
+	sql="SELECT * from equip_message natural join connect_status where equip_name =\""+c+"\";";
 }else if (s.equals("设备院系")){
-	sql="SELECT * from equip_message where faculty =\""+c+"\";";
+	sql="SELECT * from equip_message natural join connect_status where faculty =\""+c+"\";";
 }else{
-	sql="SELECT * from equip_message order by equip_number;";
+	sql="SELECT * from equip_message natural join connect_status order by equip_number;";
 }
 String to ="equipManage.jsp?";
 if (s!=null)to+="select="+s+"&";
@@ -169,6 +169,8 @@ if (c==null) c="";
 						<th>所属院系</th>
 						<th>设备地点</th>
 						<th>权限</th>
+						<th>操作</th>
+						<th>状态</th>
 			            </tr></thead>
 					<c:forEach var="row" items="${result.rows}">
 					<%
@@ -196,6 +198,7 @@ if (c==null) c="";
 					          
 							<%} %>
 							</td>
+							<td><c:out value="${row.connect_status}"/></td>
 						</tr>
 					<%} %>
 					</c:forEach>
