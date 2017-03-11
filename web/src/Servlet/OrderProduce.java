@@ -143,7 +143,7 @@ public class OrderProduce extends HttpServlet {
 				float consumption1=CardHandler.getComsuptionByUser(orderInfo.user_id);
 				float paid=-Float.parseFloat(paidInfoBean.paid_amount);
 				System.out.println(consumption1+"~"+paid);
-				if(CardHandler.addPaidInfoAndMoney(paidInfoBean)&&EquipHandler.setOrderStatus(order_id, "预约取消")
+				if(CardHandler.addPaidInfoAndMoney(paidInfoBean)&&EquipHandler.setOrderStatus(order_id, "预约取消中")
 						&&CardHandler.setC(orderInfo.user_id, consumption1+paid)){
 					AlertHandle.AlertSuccess(session, "提示", "预约取消成功！");
 					response.sendRedirect("OrderManage.jsp");

@@ -11,11 +11,13 @@ import javax.servlet.http.HttpSession;
 
 
 
+
 import Bean.CardInfoBean;
 import Bean.PaidInfoBean;
 import Bean.UserBean;
 import Model.AlertHandle;
 import Model.CardHandler;
+import Model.EquipHandler;
 
 @WebServlet("/CardServlet")
 public class CardServlet extends HttpServlet {
@@ -78,6 +80,7 @@ public class CardServlet extends HttpServlet {
 						cardInfoBean.remaining_sum=oldCardInfoBean.remaining_sum;
 						cardInfoBean.status="正常";
 						if(CardHandler.addCard(cardInfoBean)&&CardHandler.changeUser(cardInfoBean)){
+							EquipHandler.updateOrderByUserCard(cardInfoBean.user_account, cardInfoBean.card_number);
 							AlertHandle.AlertSuccess(session, "成功", "补办成功!");
 						}
 						else 

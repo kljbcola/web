@@ -233,6 +233,34 @@ public class CardHandler {
 	        }
 		return user_id;
 	}
+    public static String getCardByUserID(String user_id){
+    	String card_number="";
+		con = DbPool.getConnection();
+	        String strSql = "select card_number from user_message where user_id=?;";
+	        try
+	        {
+	            ps = con.prepareStatement(strSql);
+	            ps.setString(1,user_id);
+	            rs = ps.executeQuery();
+	            if(rs.next())
+	            {    
+	            	card_number=rs.getString(1);
+	                //释放资源
+	                DbPool.DBClose(con, ps, rs);            
+	            }
+	            else
+	            {
+	                //释放资源
+	                DbPool.DBClose(con, ps, rs);
+	            }            
+	        }catch(Exception e)
+	        {
+	            e.printStackTrace();
+	            System.out.println("getCardInfoBean出错!");
+	            return card_number;
+	        }
+		return card_number;
+	}
     public static boolean changeUser(CardInfoBean CardInfoBean){
     	System.out.println("修改用户中~~");
     	con = DbPool.getConnection();

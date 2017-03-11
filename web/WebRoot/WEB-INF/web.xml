@@ -8,4 +8,9 @@
     <filter-name>struts2</filter-name>
     <url-pattern>*.action</url-pattern>
   </filter-mapping>
+    <servlet>
+        <servlet-name>SyncServlet</servlet-name>
+        <servlet-class>Sync.SyncServlet</servlet-class>
+        <load-on-startup>9</load-on-startup>
+    </servlet>
 </web-app>

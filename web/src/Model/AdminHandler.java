@@ -78,7 +78,30 @@ public class AdminHandler {
         }
     	return userBeans;
     }
-
+    public static ArrayList<String> getAdminCards(){
+    	ArrayList<String> adminCards=new ArrayList<String>();
+    	
+    	con = DbPool.getConnection();
+        //得到Controller传入的用户输入的用户名及密码
+        String strSql = "select card_number from user_message where user_type='管理员';";
+        try
+        {
+            ps = con.prepareStatement(strSql);
+            rs = ps.executeQuery();
+            while(rs.next()){
+            	String card=rs.getString(1);
+            	if(card!=null&&!card.equals("null"))
+            		adminCards.add(card);
+            }
+            //释放资源
+            DbPool.DBClose(con, ps, rs);
+        }catch(Exception e)
+        {
+            e.printStackTrace();
+            System.out.println("checkLogin出错!");
+        }
+    	return adminCards;
+    }
     private static String clearNullString(String str){
     	if(str==null||str.equals("null"))
     		return "";

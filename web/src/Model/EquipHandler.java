@@ -3,6 +3,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 import Bean.EquipInfoBean;
 import Bean.OrderInfo;
@@ -49,6 +50,50 @@ public class EquipHandler {
     	System.out.println(equip.specification+"~~~~~~~~~~~~~");
     	return equip;
     }
+    public static String getEquipIP(String equipnum){
+    	String equipIP=null;
+		con = DbPool.getConnection();
+	        String strSql = "select equip_ip from equip_message where equip_number=?;";
+	        try
+	        {
+	            ps = con.prepareStatement(strSql);
+	            ps.setString(1,equipnum);
+	            rs = ps.executeQuery();
+	            if(rs.next())
+	            {    
+	            	equipIP=rs.getString(1);
+	                //释放资源
+	                DbPool.DBClose(con, ps, rs);            
+	            }
+	            else
+	                DbPool.DBClose(con, ps, rs);          
+	        }catch(Exception e)
+	        {
+	            e.printStackTrace();
+	            System.out.println("getequipIP出错!");
+	        }
+		return equipIP;
+    }
+    public static ArrayList<String> getEquipNumber(){
+		con = DbPool.getConnection();
+		ArrayList<String> result=new ArrayList<String>();
+	    String strSql = "select equip_number from equip_message;";
+	    try
+	    {
+	        ps = con.prepareStatement(strSql);
+	        rs = ps.executeQuery();
+	        while(rs.next())
+	            result.add(rs.getString(1));
+	        DbPool.DBClose(con, ps, rs);  
+	    }catch(Exception e)
+	    {
+	        e.printStackTrace();
+	        System.out.println("getEquipNumber出错!");
+	        return null;
+	    }
+		return result;
+	}
+    
     
     public static EquipInfoBean getEquipInfoBean(String equipnum){
     	EquipInfoBean equipInfoBean=null;
@@ -129,7 +174,6 @@ public class EquipHandler {
 	        try
 	        {
 	            ps = con.prepareStatement(strSql);
-	            System.out.println(strSql);
 	            rs = ps.executeUpdate();
 	        }catch(Exception e)
 	        {
@@ -175,7 +219,6 @@ public class EquipHandler {
 	        try
 	        {
 	            ps = con.prepareStatement(strSql);
-	            System.out.println(strSql);
 	            rs = ps.executeUpdate();
 	        }catch(Exception e)
 	        {
@@ -224,7 +267,6 @@ public class EquipHandler {
 	        try
 	        {
 	            ps = con.prepareStatement(strSql);
-	            System.out.println(strSql);
 	            rs = ps.executeUpdate();
 	            ps.close();
 	        }catch(Exception e)
@@ -247,16 +289,15 @@ public class EquipHandler {
     	con = DbPool.getConnection();
 		 int rs;
 	        String strSql = "INSERT INTO order_record "
-	        		+ "(equip_number,user_id,order_date,start_time,end_time) values "+"("
+	        		+ "(equip_number,user_id,order_date,start_time,end_time,operation) values "+"("
 	        					+ setValue(equipID)
 	        		+ ", " 		+ setValue(userID)
 	        		+ ", "		+ setValue(date)
 	        		+ ", " 		+ start_time
-	        		+ ", " 		+ end_time +");";
+	        		+ ", " 		+ end_time +",'预约处理中');";
 	        try
 	        {
 	            ps = con.prepareStatement(strSql);
-	            System.out.println(strSql);
 	            rs = ps.executeUpdate();
 	            ps.close();
 	        }catch(Exception e)
@@ -276,7 +317,6 @@ public class EquipHandler {
 					ResultSet rss = ps.executeQuery();
 					rss.next();
 					orderID=rss.getString(1);
-					System.out.println(orderID);
 		            DbPool.DBClose(con, ps);
 
 				} catch (SQLException e) {
@@ -310,6 +350,26 @@ public class EquipHandler {
         return count;
     }
     
+    public static int updateOrder(String order_record_id,float exp_start_time,float exp_end_time,String operation){
+    	int count=0;
+    	con = DbPool.getConnection();
+        String strSql = "update order_record set exp_start_time=?,exp_end_time=?, operation=? where order_record_id=?;";
+        try
+        {
+            ps = con.prepareStatement(strSql);
+            ps.setString(1,String.valueOf(exp_start_time));
+            ps.setString(2,String.valueOf(exp_end_time));
+            ps.setString(3,operation);
+            ps.setString(4,order_record_id);
+            count = ps.executeUpdate();
+        }catch(Exception e)
+        {
+            e.printStackTrace();
+            System.out.println("updateOrder出错!");
+            return count;
+        }
+        return count;
+    }
     
     
     public static boolean delorder(String id)
@@ -409,5 +469,58 @@ public class EquipHandler {
 	            return null;
 	        }
 	        return orderInfo;
+    }
+    public static int updateOrderByUserCard(String UserAccount,String card_number){
+    	int count=0;
+    	con = DbPool.getConnection();
+        String strSql = "update order_record set card_number=?, operation='预约处理中' where user_id=(select user_id from user_message where user_name=?);";
+        try
+        {
+            ps = con.prepareStatement(strSql);
+            ps.setString(1,card_number);
+            ps.setString(2,UserAccount);
+            count = ps.executeUpdate();
+        }catch(Exception e)
+        {
+            e.printStackTrace();
+            System.out.println("updateOrderByUserCard出错!");
+            return count;
+        }
+        return count;
+    }
+    
+    public static ArrayList<OrderInfo> getOrderByEquipNum(String equipNum)
+    {
+    	con = DbPool.getConnection();
+    	ArrayList<OrderInfo> orderList=new ArrayList<OrderInfo>();
+    	OrderInfo orderInfo=null;
+		ResultSet rs;
+	        String strSql = "select * from order_record where equip_number=? and (operation='预约处理中' or operation='预约取消中');";
+	        try
+	        {
+	            ps = con.prepareStatement(strSql);
+	            ps.setString(1, equipNum);
+	            rs = ps.executeQuery();
+	            orderInfo=new OrderInfo();
+	            while(rs.next()){
+		            orderInfo.order_record_id=rs.getString(1);
+		            orderInfo.equip_number=rs.getString(2);
+		            orderInfo.user_id=rs.getString(3);
+		            orderInfo.order_date=rs.getString(4);
+		            orderInfo.start_time=rs.getString(5);
+		            orderInfo.end_time=rs.getString(6);
+		            orderInfo.exp_start_time=rs.getString(7);
+		            orderInfo.exp_end_time=rs.getString(8);
+		            orderInfo.operation=rs.getString(9);
+		            orderInfo.remark=rs.getString(10);
+		            orderList.add(orderInfo);
+	            }
+	        }catch(Exception e)
+	        {
+	            e.printStackTrace();
+	            System.out.println("数据修改出错!");
+	            return null;
+	        }
+	        return orderList;
     }
 }
