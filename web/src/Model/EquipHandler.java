@@ -463,7 +463,6 @@ public class EquipHandler {
 	            ps = con.prepareStatement(strSql);
 	            ps.setString(1, status);
 	            ps.setString(2, id);
-	            System.out.println(strSql);
 	            rs = ps.executeUpdate();
 	        }catch(Exception e)
 	        {
@@ -486,7 +485,6 @@ public class EquipHandler {
 	        {
 	            ps = con.prepareStatement(strSql);
 	            ps.setString(1, id);
-	            System.out.println(strSql);
 	            rs = ps.executeQuery();
 	            orderInfo=new OrderInfo();
 	            rs.next();
@@ -507,20 +505,19 @@ public class EquipHandler {
 	        }
 	        return orderInfo;
     }
-    public static int updateOrderByUserCard(String UserAccount,String card_number){
+    public static int updateOrderByUserAccount(String UserAccount){
     	int count=0;
     	con = DbPool.getConnection();
-        String strSql = "update order_record set card_number=?, operation='预约处理中' where user_id=(select user_id from user_message where user_name=?);";
+        String strSql = "update order_record set operation='预约处理中' where operation='预约已生效' and user_id=(select user_id from user_message where user_name=?);";
         try
         {
             ps = con.prepareStatement(strSql);
-            ps.setString(1,card_number);
-            ps.setString(2,UserAccount);
+            ps.setString(1,UserAccount);
             count = ps.executeUpdate();
         }catch(Exception e)
         {
             e.printStackTrace();
-            System.out.println("updateOrderByUserCard出错!");
+            System.out.println("updateOrderByUserAccount出错!");
             return count;
         }
         return count;
@@ -530,16 +527,15 @@ public class EquipHandler {
     {
     	con = DbPool.getConnection();
     	ArrayList<OrderInfo> orderList=new ArrayList<OrderInfo>();
-    	OrderInfo orderInfo=null;
-		ResultSet rs;
-	        String strSql = "select * from order_record where equip_number=? and (operation='预约处理中' or operation='预约取消中');";
-	        try
-	        {
-	            ps = con.prepareStatement(strSql);
-	            ps.setString(1, equipNum);
-	            rs = ps.executeQuery();
-	            orderInfo=new OrderInfo();
-	            while(rs.next()){
+	    String strSql = "select * from order_record where equip_number=? and (operation='预约处理中' or operation='预约取消中');";
+	    try
+	    {
+	    	ps = con.prepareStatement(strSql);
+	    	ps.setString(1, equipNum);
+	    	rs = ps.executeQuery();
+	            
+	    	while(rs.next()){
+	            	OrderInfo orderInfo=new OrderInfo();
 		            orderInfo.order_record_id=rs.getString(1);
 		            orderInfo.equip_number=rs.getString(2);
 		            orderInfo.user_id=rs.getString(3);
@@ -551,13 +547,12 @@ public class EquipHandler {
 		            orderInfo.operation=rs.getString(9);
 		            orderInfo.remark=rs.getString(10);
 		            orderList.add(orderInfo);
-	            }
-	        }catch(Exception e)
-	        {
-	            e.printStackTrace();
-	            System.out.println("数据修改出错!");
-	            return null;
-	        }
-	        return orderList;
+	    	}
+	    }catch(Exception e){
+	    	e.printStackTrace();
+	    	System.out.println("getOrderByEquipNum出错!");
+	    	return null;
+	    }
+	    return orderList;
     }
 }

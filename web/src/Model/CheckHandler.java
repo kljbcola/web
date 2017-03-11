@@ -79,7 +79,8 @@ public class CheckHandler {
         //从数据访问组件中取得连接
         con = DbPool.getConnection();
         String strSql = "select operation,start_time,end_time,order_date from order_record where equip_number="+equipID+
-        		" and (order_date='"+date+"' or (order_date='0000-00-00' and operation='不可用')) order by start_time;";
+        		" and operation in('预约已生效','预约处理中','不可用') and (order_date='"+date
+        		+"' or (order_date='0000-00-00' and operation='不可用')) order by start_time;";
         System.out.println(strSql);
         try
         {
@@ -106,12 +107,13 @@ public class CheckHandler {
 	            	result+="2;";
                 }
                 else {
-                	if(op.equals("不可用")&&order_date!=null){
-		            	result+="1;";
+                	if(op.equals("不可用")){
+                		if(order_date!=null)
+                			result+="1;";
+		            	else 
+		            		result+="0;";
 	                }
-                	else {
-						result+="0;";
-					}
+                	
                 }
             }
             System.out.println(result);
@@ -156,7 +158,8 @@ public class CheckHandler {
     {
         //从数据访问组件中取得连接
         con = DbPool.getConnection();
-        String strSql = "select operation,start_time,end_time from order_record where equip_number="+equipID+" and order_date='"+date+"';";
+        String strSql = "select start_time,end_time from order_record where equip_number="+equipID+" and order_date='"+
+        			date+"' and operation not in('预约已取消','预约取消中','预约失败');";
         try
         {
         	System.out.println("start_time:"+start_time+" end_time:"+end_time);
@@ -164,14 +167,12 @@ public class CheckHandler {
             rs = ps.executeQuery();
             while(rs.next())
             {    
-            	String opString=rs.getString("operation");
-                if(!opString.equals("预约失败")&&!opString.equals("预约取消")){
-	            	float x=Float.valueOf(rs.getString("start_time"));
-	            	float y=Float.valueOf(rs.getString("end_time"));
-	            	System.out.println("x:"+x+" y:"+y);
-	            	if(!(x>end_time||y<start_time))
-	    				return false;
-                }
+	            float x=Float.valueOf(rs.getString(1));
+	            float y=Float.valueOf(rs.getString(2));
+	            System.out.println("x:"+x+" y:"+y);
+	            if(!(x>end_time||y<start_time))
+	    			return false;
+                
             }
             //释放资源
             DbPool.DBClose(con, ps, rs);  

@@ -80,7 +80,7 @@ public class CardServlet extends HttpServlet {
 						cardInfoBean.remaining_sum=oldCardInfoBean.remaining_sum;
 						cardInfoBean.status="正常";
 						if(CardHandler.addCard(cardInfoBean)&&CardHandler.changeUser(cardInfoBean)){
-							EquipHandler.updateOrderByUserCard(cardInfoBean.user_account, cardInfoBean.card_number);
+							EquipHandler.updateOrderByUserAccount(cardInfoBean.user_account);
 							AlertHandle.AlertSuccess(session, "成功", "补办成功!");
 						}
 						else 
